@@ -28,15 +28,13 @@
           "name": "weight entry",
           "smallIconUri": "https://s3.amazonaws.com/cdn.dabblelab.com/img/skill-template-default-sm.png",
           "largeIconUri": "https://s3.amazonaws.com/cdn.dabblelab.com/img/skill-template-default-lg.png",
-          "summary": "A skill to record your weight into the HealthyPal app",
-          "description": "Sample Full Description",
+          "summary": "A skill to record your weight, track your intake and activities into the HealthyPal app",
+          "description": "A skill to record your weight, track your intake and activities into the HealthyPal app",
           "examplePhrases": [
             "Alexa open Eloise"
           ],
           "keywords": [
-            "Eloise",
-            "Weight",
-            "Healthy Pal"
+            "Eloise"
           ]
         }
       },

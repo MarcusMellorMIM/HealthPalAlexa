@@ -2,28 +2,28 @@
   "deploy_settings": {
     "default": {
       "skill_id": "amzn1.ask.skill.a00e060a-183b-43ea-9a01-d58469256ef7",
-      "was_cloned": true,
+      "was_cloned": false,
       "merge": {},
       "resources": {
         "manifest": {
-          "eTag": "20f7494ca7da95e62d72666852d9ba83"
+          "eTag": "b4b375b6cced01e60243dbcb270457ba"
         },
         "interactionModel": {
           "en-GB": {
-            "eTag": "47d66dc8beea8b34da165a2e3996dc93"
+            "eTag": "1d02c08324774ef7572b3128986ecf94"
           }
         },
         "lambda": [
           {
-            "arn": "arn:aws:lambda:us-east-1:756834885644:function:ask-custom-weight_entry-default",
-            "awsRegion": "us-east-1",
-            "functionName": "ask-custom-weight_entry-default",
             "alexaUsage": [
               "custom/default"
             ],
-            "revisionId": "598e6184-4d32-45ac-b170-dc52d861a5e4",
+            "arn": "arn:aws:lambda:us-east-1:756834885644:function:ask-custom-weight_entry-default",
+            "awsRegion": "us-east-1",
             "codeUri": "lambda/us-east-1_ask-custom-weight_entry-default",
+            "functionName": "ask-custom-weight_entry-default",
             "handler": "index.handler",
+            "revisionId": "ec84a5dc-2702-44ce-9d9f-9b31d7dff232",
             "runtime": "nodejs8.10"
           }
         ]

@@ -9,6 +9,7 @@
   "author": "Dabble Lab",
   "license": "ISC",
   "dependencies": {
+    "amazon-date-parser": "^0.2.0",
     "ask-sdk": "^2.0.10",
     "node-fetch": "^2.6.0"
   }

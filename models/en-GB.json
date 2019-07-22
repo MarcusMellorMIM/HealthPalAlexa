@@ -1,137 +1,241 @@
 {
   "interactionModel": {
-    "languageModel": {
-      "invocationName": "eloise",
-      "intents": [
-        {
-          "name": "AMAZON.CancelIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.HelpIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.StopIntent",
-          "samples": []
-        },
-        {
-          "name": "AddWeightIntent",
-          "slots": [
-            {
-              "name": "weight",
-              "type": "AMAZON.NUMBER",
-              "samples": [
-                "I weigh {weight} kilos",
-                "add {weight}",
-                "{weight} kilos",
-                "{weight}",
-                "add weight",
-                "record weight"
-              ]
+      "languageModel": {
+          "invocationName": "eloise",
+          "intents": [
+              {
+                  "name": "AMAZON.CancelIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.HelpIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.StopIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AddWeightIntent",
+                  "slots": [
+                      {
+                          "name": "weight",
+                          "type": "AMAZON.NUMBER",
+                          "samples": [
+                              "I weigh {weight} kilos",
+                              "add {weight}",
+                              "{weight} kilos",
+                              "{weight}",
+                              "add weight",
+                              "record weight"
+                          ]
+                      }
+                  ],
+                  "samples": [
+                      "I weigh {weight} kilos",
+                      "add {weight}",
+                      "{weight} kilos",
+                      "{weight}",
+                      "add weight",
+                      "record weight"
+                  ]
+              },
+              {
+                  "name": "GetWeightIntent",
+                  "slots": [],
+                  "samples": [
+                      "list",
+                      "get my weight",
+                      "last weight",
+                      "what do I weigh"
+                  ]
+              },
+              {
+                  "name": "RemoveWeightIntent",
+                  "slots": [],
+                  "samples": [
+                      "remove",
+                      "remove weight",
+                      "remove my last weight",
+                      "delete",
+                      "delete weight",
+                      "delete my last weight",
+                      "delete last weight"
+                  ]
+              },
+              {
+                "name": "GetSummaryIntent",
+                "slots": [
+                  {
+                      "name": "inputDate",
+                      "type": "AMAZON.DATE",
+                      "samples": [
+                        "summary for {inputDate}",
+                        "For {inputDate}",
+                        "{inputDate}"
+                      ]
+                  }
+              ],
+            "samples": [
+                    "get summary",
+                    "summary for {inputDate}",
+                    "{inputDate} summary",
+                    "summarise my diary",
+                    "summary"
+                ]
+              },
+              {
+                  "name": "AddInputIntent",
+                  "slots": [
+                      {
+                          "name": "inputDetail",
+                          "type": "AMAZON.SearchQuery",
+                          "samples": [
+                              "Please add {inputDetail}",
+                              "Add {inputDetail}",
+                              "{inputDetail}"
+                          ]
+                      }
+                  ],
+                  "samples": [
+                      "add food",
+                      "add drink",
+                      "add some food",
+                      "add some drink"
+                  ]
+              },
+              {
+                "name": "AddActivityIntent",
+                "slots": [
+                    {
+                        "name": "inputDetail",
+                        "type": "AMAZON.SearchQuery",
+                        "samples": [
+                            "I {inputDetail}",
+                            "Add {inputDetail}",
+                            "{inputDetail}"
+                        ]
+                    }
+                ],
+                "samples": [
+                    "add activity",
+                    "add exercise",
+                    "enter an activity",
+                    "record an activity",
+                    "record some exercise",
+                    "record activity",
+                    "record exercise"
+                ]
+            },
+              {
+                  "name": "AMAZON.NavigateHomeIntent",
+                  "samples": []
+              }
+          ],
+          "types": []
+      },
+      "dialog": {
+          "intents": [
+              {
+                  "name": "AddWeightIntent",
+                  "confirmationRequired": false,
+                  "prompts": {},
+                  "slots": [
+                      {
+                          "name": "weight",
+                          "type": "AMAZON.NUMBER",
+                          "confirmationRequired": false,
+                          "elicitationRequired": true,
+                          "prompts": {
+                              "elicitation": "Elicit.Slot.932310416052.1004645578092"
+                          },
+                          "validations": [
+                              {
+                                  "type": "isGreaterThan",
+                                  "prompt": "Slot.Validation.622232557362.1111944101787.940926011815",
+                                  "value": "0"
+                              },
+                              {
+                                  "type": "isLessThan",
+                                  "prompt": "Slot.Validation.622232557362.1111944101787.1406238761551",
+                                  "value": "200"
+                              }
+                          ]
+                      }
+                  ]
+              },
+              {
+                  "name": "AddInputIntent",
+                  "confirmationRequired": false,
+                  "prompts": {},
+                  "slots": [
+                      {
+                          "name": "inputDetail",
+                          "type": "AMAZON.SearchQuery",
+                          "confirmationRequired": false,
+                          "elicitationRequired": true,
+                          "prompts": {
+                              "elicitation": "Elicit.Slot.AddInputIntent.inputDetailPrompt01"
+                          }
+                      }
+                  ]
+              },
+              {
+                "name": "AddActivityIntent",
+                "confirmationRequired": false,
+                "prompts": {},
+                "slots": [
+                    {
+                        "name": "inputDetail",
+                        "type": "AMAZON.SearchQuery",
+                        "confirmationRequired": false,
+                        "elicitationRequired": true,
+                        "prompts": {
+                            "elicitation": "Elicit.Slot.AddInputIntent.inputDetailPrompt01"
+                        }
+                    }
+                ]
             }
           ],
-          "samples": [
-            "I weigh {weight} kilos",
-            "add {weight}",
-            "{weight} kilos",
-            "{weight}",
-            "add weight",
-            "record weight"
-          ]
-        },
-        {
-          "name": "GetWeightIntent",
-          "slots": [],
-          "samples": [
-            "list",
-            "get my weight",
-            "last weight",
-            "what do I weigh"
-          ]
-        },
-        {
-          "name": "RemoveWeightIntent",
-          "slots": [],
-          "samples": [
-            "remove",
-            "remove weight",
-            "remove my last weight",
-            "delete",
-            "delete weight",
-            "delete my last weight",
-            "delete last weight"
-          ]
-        },
-        {
-          "name": "AMAZON.NavigateHomeIntent",
-          "samples": []
-        }
-      ],
-      "types": []
-    },
-    "dialog": {
-      "intents": [
-        {
-          "name": "AddWeightIntent",
-          "confirmationRequired": false,
-          "prompts": {},
-          "slots": [
-            {
-              "name": "weight",
-              "type": "AMAZON.NUMBER",
-              "elicitationRequired": true,
-              "confirmationRequired": false,
-              "prompts": {
-                "elicitation": "Elicit.Slot.932310416052.1004645578092"
-              },
-              "validations": [
-                {
-                  "type": "isGreaterThan",
-                  "prompt": "Slot.Validation.622232557362.1111944101787.940926011815",
-                  "value": "0"
-                },
-                {
-                  "type": "isLessThan",
-                  "prompt": "Slot.Validation.622232557362.1111944101787.1406238761551",
-                  "value": "200"
-                }
+          "delegationStrategy": "SKILL_RESPONSE"
+      },
+      "prompts": [
+          {
+              "id": "Elicit.Slot.932310416052.1004645578092",
+              "variations": [
+                  {
+                      "type": "PlainText",
+                      "value": "Please tell me your weight in kilograms"
+                  }
               ]
-            }
-          ]
-        }
-      ],
-      "delegationStrategy": "SKILL_RESPONSE"
-    },
-    "prompts": [
-      {
-        "id": "Elicit.Slot.932310416052.1004645578092",
-        "variations": [
+          },
           {
-            "type": "PlainText",
-            "value": "Please tell me your weight in kilograms"
-          }
-        ]
-      },
-      {
-        "id": "Slot.Validation.622232557362.1111944101787.940926011815",
-        "variations": [
+            "id": "Elicit.Slot.AddInputIntent.inputDetailPrompt01",
+            "variations": [
+                {
+                    "type": "PlainText",
+                    "value": "What would you like to add "
+                }
+            ]
+        },
           {
-            "type": "PlainText",
-            "value": "Sorry, but the weight must be more than zero kilograms. Please tell me your weight"
-          }
-        ]
-      },
-      {
-        "id": "Slot.Validation.622232557362.1111944101787.1406238761551",
-        "variations": [
+              "id": "Slot.Validation.622232557362.1111944101787.940926011815",
+              "variations": [
+                  {
+                      "type": "PlainText",
+                      "value": "Sorry, but the weight must be more than zero kilograms. Please tell me your weight"
+                  }
+              ]
+          },
           {
-            "type": "PlainText",
-            "value": "Sorry, but the weight must be less than two hundred kilograms. Please tell me your weight"
+              "id": "Slot.Validation.622232557362.1111944101787.1406238761551",
+              "variations": [
+                  {
+                      "type": "PlainText",
+                      "value": "Sorry, but the weight must be less than two hundred kilograms. Please tell me your weight"
+                  }
+              ]
           }
-        ]
-      }
-    ]
-  },
-  "version": "23"
+      ]
+  }
 }

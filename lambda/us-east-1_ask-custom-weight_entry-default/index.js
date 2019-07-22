@@ -8,11 +8,12 @@ const GENERAL_REPROMPT = "What would you like to do?";
 const dynamoDBTableName = "weight";
 
 const LaunchRequestHandler = {
+// The 1st function initiated by Alexa when Eloise is opened
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
   },
   handle(handlerInput) {
-    const speechText = 'Hello there. I am here to help you reach your weight goals. You can say add weight,  get my last weight or delete last weight.';
+    const speechText = 'Hello there. I am here to help you reach your weight goals. You can say add weight or food,  get my last weight or food, delete last weight or food.';
     const repromptText = 'What would you like to do? You can say HELP to get available options';
     return handlerInput.responseBuilder
       .speak(speechText)
@@ -21,6 +22,162 @@ const LaunchRequestHandler = {
   },
 };
 
+// ////////////////////////////////////
+// INPUT HANDLERS
+// ////////////////////////////////////
+const InProgressAddInputIntentHandler = {
+  // This deals with the add intake intent when in mid flow, and the user hasn't told Alexa what to add
+  canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
+    return request.type === 'IntentRequest' &&
+      request.intent.name === 'AddInputIntent' &&
+      request.dialogState !== 'COMPLETED';
+  },
+  handle(handlerInput) {
+    const currentIntent = handlerInput.requestEnvelope.request.intent;
+    return handlerInput.responseBuilder
+      .addDelegateDirective(currentIntent)
+      .getResponse();
+  }
+}
+
+
+const AddInputIntentHandler = {
+  // We are at the point where we can add the input into the diary
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'AddInputIntent'
+      && handlerInput.requestEnvelope.request.intent.slots.inputDetail.value; // Will only fire if this is filled
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const inputDetail = slots.inputDetail.value;
+    return apiHelper.addInput(inputDetail, userID)
+      .then((data) => {
+        const speechText = `You have added ${inputDetail} to your diary totalling ${data.calories} calories. You can say add more food, list last food entry or delete last food entry`;
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("Error occured while saving food", err);
+        const speechText = "we cannot save your food and dring right now. Please do try again!" + err
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
+// ////////////////////////////////////
+// ACTIVITY HANDLERS
+// ////////////////////////////////////
+const InProgressAddActivityIntentHandler = {
+  // This deals with the add intake intent when in mid flow, and the user hasn't told Alexa what to add
+  canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
+    return request.type === 'IntentRequest' &&
+      request.intent.name === 'AddActivityIntent' &&
+      request.dialogState !== 'COMPLETED';
+  },
+  handle(handlerInput) {
+    const currentIntent = handlerInput.requestEnvelope.request.intent;
+    return handlerInput.responseBuilder
+      .addDelegateDirective(currentIntent)
+      .getResponse();
+  }
+}
+
+
+const AddInputActivityHandler = {
+  // We are at the point where we can add the input into the diary
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'AddActivityIntent'
+      && handlerInput.requestEnvelope.request.intent.slots.inputDetail.value; // Will only fire if this is filled
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const inputDetail = slots.inputDetail.value;
+    return apiHelper.addActivity(inputDetail, userID)
+      .then((data) => {
+        const speechText = `You have added ${inputDetail} to your diary totalling ${data.calories} calories.`;
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("Error occured while saving activity", err);
+        const speechText = "we cannot save your activity right now. Please do try again!" + err
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
+// ////////////////////////////////////////////////
+// INSIGHT SUMMARIES
+// ////////////////////////////////////////////////
+const InProgressGetSummaryIntentHandler = {
+  // This deals with the add intake intent when in mid flow, and the user hasn't told Alexa what to add
+  canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
+    return request.type === 'IntentRequest' &&
+      request.intent.name === 'GetSummaryIntent' &&
+      request.dialogState !== 'COMPLETED';
+  },
+  handle(handlerInput) {
+    const currentIntent = handlerInput.requestEnvelope.request.intent;
+    return handlerInput.responseBuilder
+      .addDelegateDirective(currentIntent)
+      .getResponse();
+  }
+}
+
+// ///////////////////////////////
+// SUMMARY EVENT HANDLERS
+// //////////////////////////////
+const GetSummaryIntentHandler = {
+  // Give a summary of food input
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'GetSummaryIntent'
+      && handlerInput.requestEnvelope.request.intent.slots.inputDate.value; // Will only fire if this is filled
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const inputDate = slots.inputDate.value;
+    console.log(`inputDate value from getInputHandler ${inputDate}`)
+    return apiHelper.getSummary(inputDate, userID)
+      .then((data) => {
+        const speechText = `${inputDate} your inputs equalled ${data[data.length-1].input}, you burnt ${data[data.length-1].bmr}. Your insight is ${data[data.length-1].insight}`;
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("Error occured while getting summary", err);
+        const speechText = "we cannot get your summary right now. Please do try again! " + err
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
+// ///////////////////////////////
+// WEIGHT HANDLERS
+// ///////////////////////////////
 const InProgressAddWeightIntentHandler = {
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
@@ -36,7 +193,6 @@ const InProgressAddWeightIntentHandler = {
   }
 }
 
-// ADD WEIGHT HANDLER
 const AddWeightIntentHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
@@ -208,6 +364,10 @@ exports.handler = skillBuilder
     GetWeightIntentHandler,
  //   InProgressRemoveWeightIntentHandler,
     RemoveWeightIntentHandler,
+    InProgressAddInputIntentHandler,
+    AddInputIntentHandler,
+    InProgressGetSummaryIntentHandler,
+    GetSummaryIntentHandler,
     HelpIntentHandler,
     CancelAndStopIntentHandler,
     SessionEndedRequestHandler
