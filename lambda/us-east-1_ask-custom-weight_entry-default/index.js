@@ -2,7 +2,8 @@
 /* eslint-disable  no-console */
 
 const Alexa = require('ask-sdk');
-const dbHelper = require('./helpers/dbHelper');
+// dbHelper not required for the moment
+// const dbHelper = require('./helpers/dbHelper');
 const apiHelper = require('./helpers/apiHelper')
 const GENERAL_REPROMPT = "What would you like to do?";
 const dynamoDBTableName = "weight";
@@ -13,7 +14,7 @@ const LaunchRequestHandler = {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
   },
   handle(handlerInput) {
-    const speechText = 'Hello there. I am here to help you reach your weight goals. You can say add weight or food,  get my last weight or food, delete last weight or food.';
+    const speechText = 'Hello there. I am here to help you reach your weight goals. You can say, add, list or delete weight, food or activity. You can also ask for a summary for today. ';
     const repromptText = 'What would you like to do? You can say HELP to get available options';
     return handlerInput.responseBuilder
       .speak(speechText)
@@ -26,7 +27,8 @@ const LaunchRequestHandler = {
 // INPUT HANDLERS
 // ////////////////////////////////////
 const InProgressAddInputIntentHandler = {
-  // This deals with the add intake intent when in mid flow, and the user hasn't told Alexa what to add
+  // This makes sure the inputDetail slot is 
+  // filled in, prior to completing the AddInput intent
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
     return request.type === 'IntentRequest' &&
@@ -41,9 +43,9 @@ const InProgressAddInputIntentHandler = {
   }
 }
 
-
 const AddInputIntentHandler = {
   // We are at the point where we can add the input into the diary
+  // the inputDetail slot has been filled
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
       && handlerInput.requestEnvelope.request.intent.name === 'AddInputIntent'
@@ -76,7 +78,8 @@ const AddInputIntentHandler = {
 // ACTIVITY HANDLERS
 // ////////////////////////////////////
 const InProgressAddActivityIntentHandler = {
-  // This deals with the add intake intent when in mid flow, and the user hasn't told Alexa what to add
+  // This deals with getting the activity text slot
+  // when in the AddActivity intent
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
     return request.type === 'IntentRequest' &&
@@ -92,8 +95,8 @@ const InProgressAddActivityIntentHandler = {
 }
 
 
-const AddInputActivityHandler = {
-  // We are at the point where we can add the input into the diary
+const AddActivityIntentHandler = {
+// We are at the point where we can add the input into the diary
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
       && handlerInput.requestEnvelope.request.intent.name === 'AddActivityIntent'
@@ -126,7 +129,8 @@ const AddInputActivityHandler = {
 // INSIGHT SUMMARIES
 // ////////////////////////////////////////////////
 const InProgressGetSummaryIntentHandler = {
-  // This deals with the add intake intent when in mid flow, and the user hasn't told Alexa what to add
+  // This deals with the add intake intent when in mid flow, 
+  // and the user hasn't told Alexa what the date is
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
     return request.type === 'IntentRequest' &&
@@ -141,11 +145,9 @@ const InProgressGetSummaryIntentHandler = {
   }
 }
 
-// ///////////////////////////////
-// SUMMARY EVENT HANDLERS
-// //////////////////////////////
 const GetSummaryIntentHandler = {
-  // Give a summary of food input
+// Give a summary from the inputs, activities and user details
+// using the amazon date slot
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
       && handlerInput.requestEnvelope.request.intent.name === 'GetSummaryIntent'
@@ -159,7 +161,7 @@ const GetSummaryIntentHandler = {
     console.log(`inputDate value from getInputHandler ${inputDate}`)
     return apiHelper.getSummary(inputDate, userID)
       .then((data) => {
-        const speechText = `${inputDate} your inputs equalled ${data[data.length-1].input}, you burnt ${data[data.length-1].bmr}. Your insight is ${data[data.length-1].insight}`;
+        const speechText = `${data[data.length-1].insight} ${data[data.length-1].speechtext}`;
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
@@ -179,6 +181,7 @@ const GetSummaryIntentHandler = {
 // WEIGHT HANDLERS
 // ///////////////////////////////
 const InProgressAddWeightIntentHandler = {
+// Get the weight_kg slot, if not already filled
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
     return request.type === 'IntentRequest' &&
@@ -194,6 +197,7 @@ const InProgressAddWeightIntentHandler = {
 }
 
 const AddWeightIntentHandler = {
+// Add the weight, once the weight_kg slot has been filled
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
       && handlerInput.requestEnvelope.request.intent.name === 'AddWeightIntent';
@@ -221,8 +225,8 @@ const AddWeightIntentHandler = {
   },
 };
 
-// GET WEIGHT HANDLER
 const GetWeightIntentHandler = {
+  // Get the last weight, and compare against the one before
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
       && handlerInput.requestEnvelope.request.intent.name === 'GetWeightIntent';
@@ -257,23 +261,8 @@ const GetWeightIntentHandler = {
   }
 }
 
-const InProgressRemoveWeightIntentHandler = {
-  canHandle(handlerInput) {
-    const request = handlerInput.requestEnvelope.request;
-    return request.type === 'IntentRequest' &&
-      request.intent.name === 'RemoveWeightIntent' &&
-      request.dialogState !== 'COMPLETED';
-  },
-  handle(handlerInput) {
-    const currentIntent = handlerInput.requestEnvelope.request.intent;
-    return handlerInput.responseBuilder
-      .addDelegateDirective(currentIntent)
-      .getResponse();
-  }
-}
-
-// REMOVE WEIGHT HANDLER
 const RemoveWeightIntentHandler = {
+// Remove the last weight entry
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
       && handlerInput.requestEnvelope.request.intent.name === 'RemoveWeightIntent';
@@ -298,7 +287,10 @@ const RemoveWeightIntentHandler = {
       })
   }
 }
- 
+
+// ///////////////////////////////////////////////////////
+// Generic functions
+// /////////////////////////////////////////////////////// 
 const HelpIntentHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
@@ -366,6 +358,8 @@ exports.handler = skillBuilder
     RemoveWeightIntentHandler,
     InProgressAddInputIntentHandler,
     AddInputIntentHandler,
+    InProgressAddActivityIntentHandler,
+    AddActivityIntentHandler,
     InProgressGetSummaryIntentHandler,
     GetSummaryIntentHandler,
     HelpIntentHandler,

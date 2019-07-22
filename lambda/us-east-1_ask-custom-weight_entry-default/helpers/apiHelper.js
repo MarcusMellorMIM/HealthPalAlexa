@@ -103,6 +103,9 @@ apiHelper.prototype.getSummary = async (inputDate, userID) => {
 // Get a summary for a given date range
 // The dates are a hash of startDate and endDate
             const summaryDate = new AmazonDateParser(inputDate);
+            // The date should be in the following format
+            //            { endDate: Sun Dec 03 2017 23:59:59 GMT+0000 (GMT),
+            //             startDate: Mon Nov 27 2017 00:00:00 GMT+0000 (GMT) }
             let headers = getJWTHeaders(userID);
             Object.assign(headers.headers, summaryDate)
             console.log(`In getInputs ${headers}`)

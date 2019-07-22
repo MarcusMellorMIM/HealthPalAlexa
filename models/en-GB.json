@@ -71,8 +71,9 @@
                       "type": "AMAZON.DATE",
                       "samples": [
                         "summary for {inputDate}",
-                        "For {inputDate}",
-                        "{inputDate}"
+                        "insight",
+                        "{inputDate} insight",
+                        "feedback"
                       ]
                   }
               ],
@@ -80,8 +81,11 @@
                     "get summary",
                     "summary for {inputDate}",
                     "{inputDate} summary",
-                    "summarise my diary",
-                    "summary"
+                    "how am i doing",
+                    "insight",
+                    "todays insight",
+                    "{inputDate} insight",
+                    "any feedback"
                 ]
               },
               {
@@ -100,6 +104,7 @@
                   "samples": [
                       "add food",
                       "add drink",
+                      "add meal",
                       "add some food",
                       "add some drink"
                   ]
