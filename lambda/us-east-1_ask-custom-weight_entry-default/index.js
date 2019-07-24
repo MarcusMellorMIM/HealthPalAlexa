@@ -5,7 +5,9 @@ const Alexa = require('ask-sdk');
 // dbHelper not required for the moment
 // const dbHelper = require('./helpers/dbHelper');
 const apiHelper = require('./helpers/apiHelper')
-const GENERAL_REPROMPT = "What would you like to do?";
+// WORKTODO - TRY AND MODULARISE FUNCTIONS -- const weightHelper = require('./helpers/weightHelper')
+
+const GENERAL_REPROMPT = "What would you like to do?  You can say HELP to get available options";
 const dynamoDBTableName = "weight";
 
 const LaunchRequestHandler = {
@@ -13,18 +15,169 @@ const LaunchRequestHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
   },
-  handle(handlerInput) {
-    const speechText = 'Hello there. I am here to help you reach your weight goals. You can say, add, list or delete weight, food or activity. You can also ask for a summary for today. ';
-    const repromptText = 'What would you like to do? You can say HELP to get available options';
-    return handlerInput.responseBuilder
-      .speak(speechText)
-      .reprompt(repromptText)
-      .getResponse();
+//  handle(handlerInput) {
+    async handle(handlerInput) {
+      const {responseBuilder } = handlerInput;
+      const userID = handlerInput.requestEnvelope.context.System.user.userId;  
+      return apiHelper.getUser(userID)
+      .then((data) => {
+        return responseBuilder
+          .speak(`${data.salutation} ${data.speechtext}`)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("Error occured getting user credentials", err);
+        const speechText = "Sorry, but I cannot get your user credentials. Please do try again!" + err
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
   },
 };
 
+// /////////////////////////////////////
+// DEMOGRAPHIC HELPERS
+// /////////////////////////////////////
+const InProgressAddHeightIntentHandler = {
+  // This will set the persons height
+  canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
+    return request.type === 'IntentRequest' &&
+      request.intent.name === 'AddHeightIntent' &&
+      request.dialogState !== 'COMPLETED';
+  },
+  handle(handlerInput) {
+    const currentIntent = handlerInput.requestEnvelope.request.intent;
+    return handlerInput.responseBuilder
+      .addDelegateDirective(currentIntent)
+      .getResponse();
+  }
+}
+
+const AddHeightIntentHandler = {
+  // We are at the point where we can add the input into the diary
+  // the inputDetail slot has been filled
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'AddHeightIntent'
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const inputNumber = slots.inputNumber.value;
+    return apiHelper.addHeight(inputNumber, userID)
+      .then((data) => {
+        const speechText = `${data.speechcongrats}, you have set your height to ${inputNumber} centimetres. ${data.speechtext}`;
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("Error occured while setting your height", err);
+        const speechText = "we cannot set your height right now. Please do try again!" + err
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
+const InProgressAddAgeIntentHandler = {
+  // This will ask the user for their age
+  canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
+    return request.type === 'IntentRequest' &&
+      request.intent.name === 'AddAgeIntent' &&
+      request.dialogState !== 'COMPLETED';
+  },
+  handle(handlerInput) {
+    const currentIntent = handlerInput.requestEnvelope.request.intent;
+    return handlerInput.responseBuilder
+      .addDelegateDirective(currentIntent)
+      .getResponse();
+  }
+}
+
+const AddAgeIntentHandler = {
+  // Add the age once the slot is filled
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'AddAgeIntent'
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const inputNumber = slots.inputNumber.value;
+    return apiHelper.addAge(inputNumber, userID)
+      .then((data) => {
+        const speechText = `${data.speechcongrats}, you have set your age to ${inputNumber} years. ${data.speechtext}`;
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("Error occured while setting your age", err);
+        const speechText = "we cannot set your age right now. Please do try again!" + err
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
+const InProgressAddGenderIntentHandler = {
+  // This will set the persons gender
+  canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
+    return request.type === 'IntentRequest' &&
+      request.intent.name === 'AddGenderIntent' &&
+      request.dialogState !== 'COMPLETED';
+  },
+  handle(handlerInput) {
+    const currentIntent = handlerInput.requestEnvelope.request.intent;
+    return handlerInput.responseBuilder
+      .addDelegateDirective(currentIntent)
+      .getResponse();
+  }
+}
+
+const AddGenderIntentHandler = {
+  // Set the gender of a person
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'AddGenderIntent'
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slots = handlerInput.requestEnvelope.request.intent.slots;
+    const inputGender = slots.inputGender.value;
+    return apiHelper.addGender(inputGender, userID)
+      .then((data) => {
+        const speechText = `${data.speechcongrats}, you have set your gender to ${data.gender}. ${data.speechtext}`;
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("Error occured while setting your gender", err);
+        const speechText = "we cannot set your gender right now. Please do try again!" + err
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
+
 // ////////////////////////////////////
-// INPUT HANDLERS
+// INPUT HANDLERS (MEALS, FOOD AND DRINKS)
 // ////////////////////////////////////
 const InProgressAddInputIntentHandler = {
   // This makes sure the inputDetail slot is 
@@ -58,7 +211,7 @@ const AddInputIntentHandler = {
     const inputDetail = slots.inputDetail.value;
     return apiHelper.addInput(inputDetail, userID)
       .then((data) => {
-        const speechText = `You have added ${inputDetail} to your diary totalling ${data.calories} calories. You can say add more food, list last food entry or delete last food entry`;
+        const speechText = `${data.speechcongrats}, you have added ${inputDetail} to your diary totalling ${data.calories} calories. ${data.speechtext}.`;
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
@@ -94,7 +247,6 @@ const InProgressAddActivityIntentHandler = {
   }
 }
 
-
 const AddActivityIntentHandler = {
 // We are at the point where we can add the input into the diary
   canHandle(handlerInput) {
@@ -109,7 +261,7 @@ const AddActivityIntentHandler = {
     const inputDetail = slots.inputDetail.value;
     return apiHelper.addActivity(inputDetail, userID)
       .then((data) => {
-        const speechText = `You have added ${inputDetail} to your diary totalling ${data.calories} calories.`;
+        const speechText = `${data.speechcongrats}, you have added ${inputDetail} to your diary totalling ${data.calories} calories. ${data.speechtext}`;
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
@@ -124,6 +276,61 @@ const AddActivityIntentHandler = {
       })
   },
 };
+
+const GetInputIntentHandler = {
+  // Get the last input, meal or drink
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'GetInputIntent';
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+// Get the last reading from a fetch request
+      return apiHelper.getInput(userID)
+              .then((data) => {
+          const speechText = `Your last entry was ${data.detail} , totalling ${data.calories} calories. ${data.speechtext}`;
+          return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+
+      })
+      .catch((err) => {
+        const speechText = "we cannot get your last meal right now, please try again. " + err
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  }
+}
+
+const RemoveInputIntentHandler = {
+// Remove the last weight entry
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'RemoveInputIntent';
+  }, 
+  handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    return apiHelper.removeLastInput(userID)
+      .then((data) => {
+        const speechText = `${data.speechcongrats}, you removed ${data.detail} from your diary, totalling ${data.calories} calories. ${data.speechtext}`;
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        const speechText = `There was an error removing your last meal, please try again. ` + err
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+  }
+}
 
 // ////////////////////////////////////////////////
 // INSIGHT SUMMARIES
@@ -209,7 +416,7 @@ const AddWeightIntentHandler = {
     const weight = parseInt(slots.weight.value);
     return apiHelper.addWeight(weight, userID)
       .then((data) => {
-        const speechText = `You have added ${weight} kilos. You can say add to add another reading or list to listen to the last reading`;
+        const speechText = `${data.speechcongrats}. You have added ${weight} kilos. ${data.speechtext}`;
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
@@ -297,7 +504,7 @@ const HelpIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'AMAZON.HelpIntent';
   },
   handle(handlerInput) {
-    const speechText = 'Say add weight, last weight or remove weight';
+    const speechText = 'Hello, I am your wellbeing friend called Flo. You can say, add, get or delete weight, food or activity. You can also ask for a summary for today. ';
 
     return handlerInput.responseBuilder
       .speak(speechText)
@@ -351,13 +558,20 @@ const skillBuilder = Alexa.SkillBuilders.standard();
 exports.handler = skillBuilder
   .addRequestHandlers(
     LaunchRequestHandler,
+    InProgressAddAgeIntentHandler,
+    AddAgeIntentHandler,
+    InProgressAddGenderIntentHandler,
+    AddGenderIntentHandler,
+    InProgressAddHeightIntentHandler,
+    AddHeightIntentHandler,
     InProgressAddWeightIntentHandler,
     AddWeightIntentHandler,
     GetWeightIntentHandler,
- //   InProgressRemoveWeightIntentHandler,
     RemoveWeightIntentHandler,
     InProgressAddInputIntentHandler,
     AddInputIntentHandler,
+    GetInputIntentHandler,
+    RemoveInputIntentHandler,
     InProgressAddActivityIntentHandler,
     AddActivityIntentHandler,
     InProgressGetSummaryIntentHandler,

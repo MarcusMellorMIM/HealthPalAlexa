@@ -25,16 +25,18 @@
     "publishingInformation": {
       "locales": {
         "en-GB": {
-          "name": "weight entry",
+          "name": "floe my health pal",
           "smallIconUri": "https://s3.amazonaws.com/cdn.dabblelab.com/img/skill-template-default-sm.png",
           "largeIconUri": "https://s3.amazonaws.com/cdn.dabblelab.com/img/skill-template-default-lg.png",
-          "summary": "A skill to record your weight, track your intake and activities into the HealthyPal app",
-          "description": "A skill to record your weight, track your intake and activities into the HealthyPal app",
+          "summary": "A skill to help you manage your weight, by tracking your intake and activities in the HealthyPal app",
+          "description": "A skill to help you manage your weight, by tracking your intake and activities in the HealthyPal app",
           "examplePhrases": [
-            "Alexa open Eloise"
+            "Alexa open Flo my health pal"
           ],
           "keywords": [
-            "Eloise"
+            "floe",
+            "floe my health pal",
+            "my health pal"
           ]
         }
       },

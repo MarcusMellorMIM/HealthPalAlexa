@@ -6,11 +6,11 @@
       "merge": {},
       "resources": {
         "manifest": {
-          "eTag": "b4b375b6cced01e60243dbcb270457ba"
+          "eTag": "76a1bb16f92e02ca6cbce851a700a1c4"
         },
         "interactionModel": {
           "en-GB": {
-            "eTag": "703a9a7cf6c7b3db9a34c731b9c36612"
+            "eTag": "66da2f3fa11b1d81c860a9cd2fdd75c5"
           }
         },
         "lambda": [
@@ -23,7 +23,7 @@
             "codeUri": "lambda/us-east-1_ask-custom-weight_entry-default",
             "functionName": "ask-custom-weight_entry-default",
             "handler": "index.handler",
-            "revisionId": "26d0cbe5-bb12-4fc0-8641-ae25dcf69fe0",
+            "revisionId": "6ac0fdea-62b0-4bb9-b31e-1ae74cd77168",
             "runtime": "nodejs8.10"
           }
         ]

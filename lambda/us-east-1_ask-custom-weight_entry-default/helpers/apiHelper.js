@@ -2,6 +2,7 @@ var AWS = require("aws-sdk");
 AWS.config.update({region: "us-east-1"});
 const tableName = "healthpal";
 const BASE_URL = "https://healthpal-api.herokuapp.com"
+const USERS_URL = `${BASE_URL}/users/show`;
 const WEIGHTS_URL = `${BASE_URL}/weights`;
 const INPUTS_URL = `${BASE_URL}/inputs`;
 const ACTIVITIES_URL = `${BASE_URL}/activities`;
@@ -39,6 +40,73 @@ const getConfigObj = ( userID, method, body_detail=null ) => {
 
 }
 
+apiHelper.prototype.getUser = async (userID) => {
+    // Get user information for the welcome message
+        let headers = getJWTHeaders(userID);
+        console.log(`In getUsers ${headers}`)
+        const response = await fetch(USERS_URL, headers);
+    
+        return await response.json();
+    
+    }
+
+apiHelper.prototype.addHeight = async (inputNumber, userID) => {
+        // Update the user with the height
+            body = {height_cm:inputNumber};        
+            let configObj = getConfigObj(userID, "PATCH", body );
+            console.log(`In setHeight ${configObj}`)
+            const response = await fetch(USERS_URL, configObj);
+        
+            return await response.json();
+        
+        }
+
+apiHelper.prototype.addAge = async (inputNumber, userID) => {
+            // Update the user's dob using the age in years, the rails router controller will sort out the date
+                body = {age_years:inputNumber};        
+                let configObj = getConfigObj(userID, "PATCH", body );
+                console.log(`In setHeight ${configObj}`)
+                const response = await fetch(USERS_URL, configObj);
+
+                return await response.json();
+            }
+    
+apiHelper.prototype.addGender = async (inputGender, userID) => {
+// Update the user with the transformed gender
+    switch (inputGender.toLowerCase()) {
+        case "male":
+            inputGender = "Male";
+            break;
+        case "female":
+            inputGender = "Female";
+            break;
+        case "man":
+            inputGender = "Male";
+            break;
+        case "boy":
+            inputGender = "Male";
+            break;
+        case "girl":
+            inputGender = "Female";
+            break;
+        case "lady":
+            inputGender = "Female";
+            break;
+        case "woman":
+            inputGender = "Female";
+            break;
+        default:
+            inputGender = "Female";
+        }
+
+        body = {gender:inputGender};        
+        let configObj = getConfigObj(userID, "PATCH", body );
+        console.log(`In setHeight ${configObj}`)
+        const response = await fetch(USERS_URL, configObj);
+    
+        return await response.json();
+}
+    
 apiHelper.prototype.getWeights = async (userID) => {
 // Get all weights ... maybe change route to just send last 2, as this is all I use in Alexa
     let headers = getJWTHeaders(userID);
@@ -64,7 +132,7 @@ apiHelper.prototype.addWeight = async (weight, userID) => {
 }
 
 apiHelper.prototype.removeLastWeight = async (userID) => {
-// Remove the last entered weight, bysetting the index to -1
+// Remove the last entered weight, bysetting the index to last
         let configObj = getConfigObj(userID, "DELETE" );
         console.log(`In removeLastWeight ${configObj}`)
         const response = await fetch(`${WEIGHTS_URL}/last`, configObj);
@@ -86,6 +154,25 @@ apiHelper.prototype.addInput = async (inputDetail, userID) => {
         
         }
 
+apiHelper.prototype.removeLastInput = async (userID) => {
+    // Remove the last entered weight, bysetting the index to -1
+            let configObj = getConfigObj(userID, "DELETE" );
+            console.log(`In removeLastInput ${configObj}`)
+            const response = await fetch(`${INPUTS_URL}/last`, configObj);
+        
+            return await response.json();
+        
+        }
+
+apiHelper.prototype.getInput = async (userID) => {
+    // Get the last input recorded
+        let headers = getJWTHeaders(userID);
+        console.log(`In getInputs ${headers}`)
+        const response = await fetch(`${INPUTS_URL}/last`, headers);
+    
+        return await response.json();
+    }
+            
 apiHelper.prototype.addActivity = async (inputDetail, userID) => {
 // Add activities
             body = {detail:inputDetail,
@@ -98,7 +185,26 @@ apiHelper.prototype.addActivity = async (inputDetail, userID) => {
             return await response.json();
         
         }
+
+apiHelper.prototype.removeLastActivity = async (userID) => {
+    // Remove the last entered activity, bysetting the index to last
+            let configObj = getConfigObj(userID, "DELETE" );
+            console.log(`In removeLastActivity ${configObj}`)
+            const response = await fetch(`${ACTIVITIES_URL}/last`, configObj);
         
+            return await response.json();
+        
+        }
+
+apiHelper.prototype.getActivity = async (userID) => {
+    // Get the last activity recorded
+        let headers = getJWTHeaders(userID);
+        console.log(`In getInputs ${headers}`)
+        const response = await fetch(`${ACTIVITIES_URL}/last`, headers);
+    
+        return await response.json();
+    }
+
 apiHelper.prototype.getSummary = async (inputDate, userID) => {
 // Get a summary for a given date range
 // The dates are a hash of startDate and endDate
