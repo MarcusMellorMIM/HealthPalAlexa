@@ -25,17 +25,17 @@
     "publishingInformation": {
       "locales": {
         "en-GB": {
-          "name": "floe my health pal",
+          "name": "eva my health pal",
           "smallIconUri": "https://s3.amazonaws.com/cdn.dabblelab.com/img/skill-template-default-sm.png",
           "largeIconUri": "https://s3.amazonaws.com/cdn.dabblelab.com/img/skill-template-default-lg.png",
           "summary": "A skill to help you manage your weight, by tracking your intake and activities in the HealthyPal app",
           "description": "A skill to help you manage your weight, by tracking your intake and activities in the HealthyPal app",
           "examplePhrases": [
-            "Alexa open Flo my health pal"
+            "alexa open eva my health pal"
           ],
           "keywords": [
-            "floe",
-            "floe my health pal",
+            "eva",
+            "eva my health pal",
             "my health pal"
           ]
         }

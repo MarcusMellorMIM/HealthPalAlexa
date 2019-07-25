@@ -28,7 +28,7 @@ const LaunchRequestHandler = {
       })
       .catch((err) => {
         console.log("Error occured getting user credentials", err);
-        const speechText = "Sorry, but I cannot get your user credentials. Please do try again!" + err
+        const speechText = " Sorry, but I cannot get your user credentials. Please try again. " + err
         return responseBuilder
           .speak(speechText)
           .getResponse();
@@ -77,7 +77,7 @@ const AddHeightIntentHandler = {
       })
       .catch((err) => {
         console.log("Error occured while setting your height", err);
-        const speechText = "we cannot set your height right now. Please do try again!" + err
+        const speechText = " Sorry but I cannot set your height right now. Please try again. " + err
         return responseBuilder
           .speak(speechText)
           .getResponse();
@@ -122,7 +122,7 @@ const AddAgeIntentHandler = {
       })
       .catch((err) => {
         console.log("Error occured while setting your age", err);
-        const speechText = "we cannot set your age right now. Please do try again!" + err
+        const speechText = " Sorry but I cannot set your age right now. Please try again. " + err
         return responseBuilder
           .speak(speechText)
           .getResponse();
@@ -167,7 +167,7 @@ const AddGenderIntentHandler = {
       })
       .catch((err) => {
         console.log("Error occured while setting your gender", err);
-        const speechText = "we cannot set your gender right now. Please do try again!" + err
+        const speechText = " Sorry but I cannot set your gender right now. Please try again. " + err
         return responseBuilder
           .speak(speechText)
           .getResponse();
@@ -219,13 +219,68 @@ const AddInputIntentHandler = {
       })
       .catch((err) => {
         console.log("Error occured while saving food", err);
-        const speechText = "we cannot save your food and dring right now. Please do try again!" + err
+        const speechText = " Sorry but I cannot save your food and dring right now. Please try again. " + err
         return responseBuilder
           .speak(speechText)
           .getResponse();
       })
   },
 };
+
+const GetInputIntentHandler = {
+  // Get the last input, meal or drink
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'GetInputIntent';
+  },
+  async handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+// Get the last reading from a fetch request
+      return apiHelper.getInput(userID)
+              .then((data) => {
+          const speechText = `Your last entry was ${data.detail} , totalling ${data.calories} calories. ${data.speechtext}`;
+          return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+
+      })
+      .catch((err) => {
+        const speechText = " Sorry but I cannot get your last meal right now, please try again. " + err
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  }
+}
+
+const RemoveInputIntentHandler = {
+// Remove the last input entry
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'RemoveInputIntent';
+  }, 
+  handle(handlerInput) {
+    const {responseBuilder } = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    return apiHelper.removeLastInput(userID)
+      .then((data) => {
+        const speechText = `${data.speechcongrats}, you removed ${data.detail} from your diary, totalling ${data.calories} calories. ${data.speechtext}`;
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        const speechText = ` Sorry but I cannot remove your last meal just now, please try again. ` + err
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+  }
+}
 
 // ////////////////////////////////////
 // ACTIVITY HANDLERS
@@ -269,7 +324,7 @@ const AddActivityIntentHandler = {
       })
       .catch((err) => {
         console.log("Error occured while saving activity", err);
-        const speechText = "we cannot save your activity right now. Please do try again!" + err
+        const speechText = " Sorry but I cannot save your activity right now. Please do try again!" + err
         return responseBuilder
           .speak(speechText)
           .getResponse();
@@ -277,17 +332,17 @@ const AddActivityIntentHandler = {
   },
 };
 
-const GetInputIntentHandler = {
+const GetActivityIntentHandler = {
   // Get the last input, meal or drink
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
-      && handlerInput.requestEnvelope.request.intent.name === 'GetInputIntent';
+      && handlerInput.requestEnvelope.request.intent.name === 'GetActivityIntent';
   },
   async handle(handlerInput) {
     const {responseBuilder } = handlerInput;
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
 // Get the last reading from a fetch request
-      return apiHelper.getInput(userID)
+      return apiHelper.getActivity(userID)
               .then((data) => {
           const speechText = `Your last entry was ${data.detail} , totalling ${data.calories} calories. ${data.speechtext}`;
           return responseBuilder
@@ -297,7 +352,7 @@ const GetInputIntentHandler = {
 
       })
       .catch((err) => {
-        const speechText = "we cannot get your last meal right now, please try again. " + err
+        const speechText = " Sorry but I cannot get your last activity right now, please try again. " + err
         return responseBuilder
           .speak(speechText)
           .getResponse();
@@ -305,16 +360,16 @@ const GetInputIntentHandler = {
   }
 }
 
-const RemoveInputIntentHandler = {
-// Remove the last weight entry
+const RemoveActivityIntentHandler = {
+// Remove the last input entry
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
-      && handlerInput.requestEnvelope.request.intent.name === 'RemoveInputIntent';
+      && handlerInput.requestEnvelope.request.intent.name === 'RemoveActivityIntent';
   }, 
   handle(handlerInput) {
     const {responseBuilder } = handlerInput;
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
-    return apiHelper.removeLastInput(userID)
+    return apiHelper.removeLastActivity(userID)
       .then((data) => {
         const speechText = `${data.speechcongrats}, you removed ${data.detail} from your diary, totalling ${data.calories} calories. ${data.speechtext}`;
         return responseBuilder
@@ -323,7 +378,7 @@ const RemoveInputIntentHandler = {
           .getResponse();
       })
       .catch((err) => {
-        const speechText = `There was an error removing your last meal, please try again. ` + err
+        const speechText = ` Sorry but I cannot remove your last activity, please try again. ` + err
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
@@ -376,7 +431,7 @@ const GetSummaryIntentHandler = {
       })
       .catch((err) => {
         console.log("Error occured while getting summary", err);
-        const speechText = "we cannot get your summary right now. Please do try again! " + err
+        const speechText = " Sorry but I cannot get your summary right now. Please try again. " + err
         return responseBuilder
           .speak(speechText)
           .getResponse();
@@ -424,7 +479,7 @@ const AddWeightIntentHandler = {
       })
       .catch((err) => {
         console.log("Error occured while saving weight", err);
-        const speechText = "we cannot save your weight right now. Try again!" + err
+        const speechText = " Sorry but I cannot save your weight right now. Please try again. " + err
         return responseBuilder
           .speak(speechText)
           .getResponse();
@@ -460,7 +515,7 @@ const GetWeightIntentHandler = {
 
       })
       .catch((err) => {
-        const speechText = "we cannot get your weight right now. Try again! " + err
+        const speechText = " Sorry but I cannot get your weight right now. Please try again! " + err
         return responseBuilder
           .speak(speechText)
           .getResponse();
@@ -486,7 +541,7 @@ const RemoveWeightIntentHandler = {
           .getResponse();
       })
       .catch((err) => {
-        const speechText = `There was an error removing your last weight ` + err
+        const speechText = ` Sorry but I cannot remove your last weight. Please try again. ` + err
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
@@ -504,7 +559,7 @@ const HelpIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'AMAZON.HelpIntent';
   },
   handle(handlerInput) {
-    const speechText = 'Hello, I am your wellbeing friend called Flo. You can say, add, get or delete weight, food or activity. You can also ask for a summary for today. ';
+    const speechText = 'Hello, I am your health pal friend called Eva. You can say, add, get or delete weight, food or activity. You can also ask for a summary for today. ';
 
     return handlerInput.responseBuilder
       .speak(speechText)
@@ -520,7 +575,7 @@ const CancelAndStopIntentHandler = {
         || handlerInput.requestEnvelope.request.intent.name === 'AMAZON.StopIntent');
   },
   handle(handlerInput) {
-    const speechText = 'Goodbye!';
+    const speechText = "It was lovely to speak to you again, please do come back soon. Don't be a stranger. ";
 
     return handlerInput.responseBuilder
       .speak(speechText)
@@ -547,8 +602,8 @@ const ErrorHandler = {
     console.log(`Error handled: ${error.message}`);
 
     return handlerInput.responseBuilder
-      .speak('Sorry, I can\'t understand the command. Please say again.')
-      .reprompt('Sorry, I can\'t understand the command. Please say again.')
+      .speak("Sorry, I do not understand the command. Please say again. ")
+      .reprompt("Sorry, I do not understand the command. Please say again, or say HELP, to get a list of valid commands. ")
       .getResponse();
   },
 };
@@ -574,6 +629,8 @@ exports.handler = skillBuilder
     RemoveInputIntentHandler,
     InProgressAddActivityIntentHandler,
     AddActivityIntentHandler,
+    GetActivityIntentHandler,
+    RemoveActivityIntentHandler,
     InProgressGetSummaryIntentHandler,
     GetSummaryIntentHandler,
     HelpIntentHandler,

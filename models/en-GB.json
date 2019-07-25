@@ -1,7 +1,7 @@
 {
   "interactionModel": {
       "languageModel": {
-          "invocationName": "floe my health pal",
+          "invocationName": "eva my health pal",
           "intents": [
               {
                   "name": "AMAZON.CancelIntent",
