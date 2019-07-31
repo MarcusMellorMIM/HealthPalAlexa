@@ -33,7 +33,7 @@ const LaunchRequestHandler = {
           })
      .then ((userToken) => apiHelper.getTokenUser(userToken))
      .then((data) => {
-              const speechText = `${data.salutation} ${data.speechtext}`;
+              const speechText = `${data.salutation} ${data.speechtext}. If this is not you, please say switch user `;
               return responseBuilder
                 .speak(speechText)
                 .reprompt(GENERAL_REPROMPT)
@@ -665,7 +665,7 @@ const HelpIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'AMAZON.HelpIntent';
   },
   handle(handlerInput) {
-    const speechText = 'Hello, I am your health pal friend called Eva. You can switch accoounts by saying switch user. You can then say, add, get or delete weight, food or activity. You can also ask for a summary for today. ';
+    const speechText = 'Hello, I am your health pal friend called Eva. You can switch accounts by saying switch user. You can then say, add, get or delete weight, food or activity. You can also ask for a summary for today. ';
 
     return handlerInput.responseBuilder
       .speak(speechText)
