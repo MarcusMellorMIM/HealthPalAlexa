@@ -12,7 +12,6 @@ const dynamoDBTableName = "weight";
 
 const LaunchRequestHandler = {
 // The 1st function initiated by Alexa when Eloise is opened
-// WORKTODO -- ADD A DIALOGUE TO GET THE RIGHT NAME, OR HAVE A MAIN ACCOUNT TAG
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
   },
@@ -21,95 +20,32 @@ const LaunchRequestHandler = {
       const {responseBuilder } = handlerInput;
       const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
       const userID = handlerInput.requestEnvelope.context.System.user.userId;  
-
-// Gets the first token against the amazon account WORKTODO AS ABOVE
-      return (dbHelper.getTokens(userID)
+      return dbHelper.getTokens(userID)
       .then ((userTokens) => 
-          { 
-            let userToken=userTokens[0];
-            sessionAttributes.hPalToken = userToken;
-            handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-            return userToken.token;
-          })
-     .then ((userToken) => apiHelper.getTokenUser(userToken))
-     .then((data) => {
-              const speechText = `${data.salutation} ${data.speechtext}`;
-              return responseBuilder
-                .speak(speechText)
-                .reprompt(GENERAL_REPROMPT)
-                .getResponse();
-    })
-    .catch((err) => {
-      console.log("Error occured getting the user ", err);
-      const speechText = ` Sorry but I cannot open the user account right now. Please try again. ` + err
-      return responseBuilder
-        .speak(speechText)
-        .getResponse();
-    }))
-    },
+              { 
+                sessionAttributes.hPalToken = userTokens[1].token
+                handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+                return apiHelper.getUser(handlerInput.attributesManager.getSessionAttributes().hPalToken)
+              })
+      .then((data) => {
+        return responseBuilder
+          .speak(`${data.salutation} ${data.speechtext} `)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("Error occured getting user credentials", err);
+        const speechText = " Sorry, but I cannot get your user credentials. Please try again. " + err
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
 };
 
 // /////////////////////////////////////
 // DEMOGRAPHIC HELPERS
 // /////////////////////////////////////
-const InProgressSwitchUserIntentHandler = {
-  // This will set the persons height
-  canHandle(handlerInput) {
-    const request = handlerInput.requestEnvelope.request;
-    return request.type === 'IntentRequest' &&
-      request.intent.name === 'SwitchUserIntent' &&
-      request.dialogState !== 'COMPLETED';
-  },
-  handle(handlerInput) {
-    const currentIntent = handlerInput.requestEnvelope.request.intent;
-    return handlerInput.responseBuilder
-      .addDelegateDirective(currentIntent)
-      .getResponse();
-  }
-}
-
-const SwitchUserIntentHandler = {
-// Switches to a different account pulling the token
-// WORKTODO --- 1) Error handling if user doesnt exist, or if the token has expired
-  canHandle(handlerInput) {
-    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
-      && handlerInput.requestEnvelope.request.intent.name === 'SwitchUserIntent'
-  },
-  async handle(handlerInput) {
-    const {responseBuilder } = handlerInput;
-    const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
-    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
-    const slots = handlerInput.requestEnvelope.request.intent.slots;
-    const userName = slots.userName.value;
-
-    return (dbHelper.getTokens(userID)
-          .then ((userTokens) => 
-              { 
-                let userToken=userTokens.filter(tok=>tok.name===userName.toLowerCase())[0];
-                sessionAttributes.hPalToken = userToken;
-                handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-                return userToken.token;
-              })
-         .then ((userToken) => apiHelper.getTokenUser(userToken))
-         .then((data) => {
-                  const speechText = `${data.salutation} ${data.speechtext}`;
-                  return responseBuilder
-                    .speak(speechText)
-                    .reprompt(GENERAL_REPROMPT)
-                    .getResponse();
-        })
-        .catch((err) => {
-          console.log("Error occured switching user", err);
-          const speechText = ` Sorry but I cannot switch user account to ${userName} right now. Please try again. ` + err
-          return responseBuilder
-            .speak(speechText)
-            .getResponse();
-        }))
-  },
-};
-
-
-
 const InProgressAddHeightIntentHandler = {
   // This will set the persons height
   canHandle(handlerInput) {
@@ -135,12 +71,10 @@ const AddHeightIntentHandler = {
   },
   async handle(handlerInput) {
     const {responseBuilder } = handlerInput;
-    const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
-  //  const userID = handlerInput.requestEnvelope.context.System.user.userId; 
-    const userToken = sessionAttributes.hPalToken.token;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const inputNumber = slots.inputNumber.value;
-    return apiHelper.addHeight(inputNumber, userToken)
+    return apiHelper.addHeight(inputNumber, userID)
       .then((data) => {
         const speechText = `${data.speechcongrats}, you have set your height to ${inputNumber} centimetres. ${data.speechtext}`;
         return responseBuilder
@@ -182,12 +116,10 @@ const AddAgeIntentHandler = {
   },
   async handle(handlerInput) {
     const {responseBuilder } = handlerInput;
-    const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
-  //  const userID = handlerInput.requestEnvelope.context.System.user.userId; 
-    const userToken = sessionAttributes.hPalToken.token;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const inputNumber = slots.inputNumber.value;
-    return apiHelper.addAge(inputNumber, userToken)
+    return apiHelper.addAge(inputNumber, userID)
       .then((data) => {
         const speechText = `${data.speechcongrats}, you have set your age to ${inputNumber} years. ${data.speechtext}`;
         return responseBuilder
@@ -229,12 +161,10 @@ const AddGenderIntentHandler = {
   },
   async handle(handlerInput) {
     const {responseBuilder } = handlerInput;
-    const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
-    //  const userID = handlerInput.requestEnvelope.context.System.user.userId; 
-    const userToken = sessionAttributes.hPalToken.token;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const inputGender = slots.inputGender.value;
-    return apiHelper.addGender(inputGender, userToken)
+    return apiHelper.addGender(inputGender, userID)
       .then((data) => {
         const speechText = `${data.speechcongrats}, you have set your gender to ${data.gender}. ${data.speechtext}`;
         return responseBuilder
@@ -546,10 +476,12 @@ const AddWeightIntentHandler = {
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     let weight = parseInt(slots.weight.value);
-    if (slots.decimal_weight.value || slots.decimal_weight.value>0) {
-      weight = parseFloat(weight + parseFloat(slots.decimal_weight.value/10))
+    let decimal_weight=0;
+    if (slots.decimal_weight) {
+      decimal_weight = parseInt(slots.decimal_weight.value);
     }
 
+    weight = parseFloat(weight + parseFloat(decimal_weight/10))
 
     return apiHelper.addWeight(weight, userID)
       .then((data) => {
@@ -695,8 +627,6 @@ const skillBuilder = Alexa.SkillBuilders.standard();
 exports.handler = skillBuilder
   .addRequestHandlers(
     LaunchRequestHandler,
-    InProgressSwitchUserIntentHandler,
-    SwitchUserIntentHandler,
     InProgressAddAgeIntentHandler,
     AddAgeIntentHandler,
     InProgressAddGenderIntentHandler,

@@ -1,0 +1,572 @@
+{
+  "interactionModel": {
+      "languageModel": {
+          "invocationName": "eva my health pal",
+          "intents": [
+              {
+                  "name": "AMAZON.CancelIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.HelpIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.StopIntent",
+                  "samples": []
+              },
+              {
+                "name": "SwitchUserIntent",
+                "slots": [
+                    {
+                        "name": "userName",
+                        "type": "AMAZON.FirstName",
+                        "samples": [
+                            "{userName}",
+                            "My name is {userName}",
+                            "I am called {userName}"
+                        ]
+                    }
+                ],
+                "samples": [
+                    "Switch user to {userName}",
+                    "My name is {userName}",
+                    "I am called {userName}",
+                    "switch user",
+                    "change user",
+                    "switch account",
+                    "change account"
+                    ]
+            },
+              {
+                "name": "AddHeightIntent",
+                "slots": [
+                    {
+                        "name": "inputNumber",
+                        "type": "AMAZON.NUMBER",
+                        "samples": [
+                            "I am {inputNumber} high",
+                            "add {inputNumber} centimetres",
+                            "add height",
+                            "update height",
+                            "set height",
+                            "record height"
+                        ]
+                    }
+                ],
+                "samples": [
+                    "I am {inputNumber} high",
+                    "add {inputNumber} centimetres",
+                    "add height",
+                    "update height",
+                    "set height",
+                    "record height"
+                    ]
+            },
+            {
+                "name": "AddAgeIntent",
+                "slots": [
+                    {
+                        "name": "inputNumber",
+                        "type": "AMAZON.NUMBER",
+                        "samples": [
+                            "I am {inputNumber} years old",
+                            "add {inputNumber} years",
+                            "add age",
+                            "update age",
+                            "set age",
+                            "record age"
+                        ]
+                    }
+                ],
+                "samples": [
+                    "I am {inputNumber} years old",
+                    "add {inputNumber} years",
+                    "add age",
+                    "update age",
+                    "set age",
+                    "record age"
+                ]
+            },
+            {
+                "name": "AddGenderIntent",
+                "slots": [
+                    {
+                        "name": "inputGender",
+                        "type": "GENDER_LIST",
+                        "samples": [
+                            "{inputGender}",
+                            "Add gender {inputGender}",
+                            "Set gender to {inputGender}"
+                        ]
+                    }
+                ],
+                "samples": [
+                    "My gender is {inputGender}",
+                    "add gender",
+                    "update gender",
+                    "set gender",
+                    "record gender"
+                    ]
+            },
+            {
+                  "name": "AddWeightIntent",
+                  "slots": [
+                      {
+                          "name": "weight",
+                          "type": "AMAZON.NUMBER",
+                          "samples": [
+                                "{weight}"
+                                ]
+                      },
+                      {
+                        "name": "decimal_weight",
+                        "type": "AMAZON.NUMBER",
+                        "samples": [
+                            "{weight} point {decimal_weight}"
+                        ]
+                    }
+                  ],
+                  "samples": [
+                      "I weigh {weight} kilos",
+                      "add {weight}",
+                      "{weight} kilos",
+                      "{weight}",
+                      "I weigh {weight} point {decimal_weight} kilos",
+                      "add {weight} point {decimal_weight}",
+                      "{weight} point {decimal_weight} kilos",
+                      "{weight} point {decimal_weight}",
+                      "add weight",
+                      "update weight",
+                      "set weight",
+                      "record weight"
+                  ]
+              },
+              {
+                  "name": "GetWeightIntent",
+                  "slots": [],
+                  "samples": [
+                      "get weight",
+                      "get my weight",
+                      "my last weight",
+                      "what do I weigh"
+                  ]
+              },
+              {
+                  "name": "RemoveWeightIntent",
+                  "slots": [],
+                  "samples": [
+                      "remove weight",
+                      "remove my last weight",
+                      "remove last weight",
+                      "delete weight",
+                      "delete my last weight",
+                      "delete last weight"
+                  ]
+              },
+              {
+                "name": "GetSummaryIntent",
+                "slots": [
+                  {
+                      "name": "inputDate",
+                      "type": "AMAZON.DATE",
+                      "samples": [
+                        "summary for {inputDate}",
+                        "insight",
+                        "{inputDate} insight",
+                        "feedback"
+                      ]
+                  }
+              ],
+            "samples": [
+                    "get summary",
+                    "summary for {inputDate}",
+                    "{inputDate} summary",
+                    "how am i doing",
+                    "insight",
+                    "todays insight",
+                    "{inputDate} insight",
+                    "any feedback"
+                ]
+              },
+              {
+                  "name": "AddInputIntent",
+                  "slots": [
+                      {
+                          "name": "inputDetail",
+                          "type": "AMAZON.SearchQuery",
+                          "samples": [
+                              "Please add {inputDetail}",
+                              "Add {inputDetail}",
+                              "{inputDetail}"
+                          ]
+                      }
+                  ],
+                  "samples": [
+                      "add food",
+                      "add drink",
+                      "add meal",
+                      "add a meal",
+                      "add some food",
+                      "add some drink"
+                  ]
+              },
+              {
+                "name": "GetInputIntent",
+                "slots": [],
+                "samples": [
+                    "get meal",
+                    "get my meal",
+                    "my last meal",
+                    "get food",
+                    "get my food",
+                    "my last food",
+                    "what did I eat"
+                ]
+            },
+            {
+                "name": "RemoveInputIntent",
+                "slots": [],
+                "samples": [
+                    "remove meal",
+                    "remove my last meal",
+                    "remove last meal",
+                    "delete meal",
+                    "delete my last meal",
+                    "delete last meal",
+                    "remove food",
+                    "delete food"
+                ]
+            },
+              {
+                 "name": "AddActivityIntent",
+                "slots": [
+                    {
+                        "name": "inputDetail",
+                        "type": "AMAZON.SearchQuery",
+                        "samples": [
+                            "I {inputDetail}",
+                            "Add {inputDetail}",
+                            "{inputDetail}"
+                        ]
+                    }
+                ],
+                "samples": [
+                    "add activity",
+                    "add exercise",
+                    "enter an activity",
+                    "record an activity",
+                    "record some exercise",
+                    "record activity",
+                    "record exercise"
+                ]
+            },
+            {
+                "name": "GetActivityIntent",
+                "slots": [],
+                "samples": [
+                    "get activity",
+                    "get my activity",
+                    "my last activity",
+                    "get my activity",
+                    "my last activity"
+                ]
+            },
+            {
+                "name": "RemoveActivityIntent",
+                "slots": [],
+                "samples": [
+                    "remove activity",
+                    "remove my last activity",
+                    "remove last activity",
+                    "delete activity",
+                    "delete my last activity",
+                    "delete last activity",
+                    "remove activity",
+                    "delete activity"
+                ]
+            },
+              {
+                  "name": "AMAZON.NavigateHomeIntent",
+                  "samples": []
+              }
+          ],
+          "types": [ 
+              {"name": "GENDER_LIST",
+                "values": [
+                            { "name": { "value": "Male" } },
+                            { "name": { "value": "Man" } },
+                            { "name": { "value": "Boy" } },
+                            { "name": { "value": "Female" } },
+                            { "name": { "value": "Lady" } },
+                            { "name": { "value": "Woman" } },
+                            { "name": { "value": "Girl" } }
+                ]
+          }
+  ]
+      },
+      "dialog": {
+          "intents": [
+              {
+                  "name": "AddWeightIntent",
+                  "confirmationRequired": false,
+                  "prompts": {},
+                  "slots": [
+                      {
+                          "name": "weight",
+                          "type": "AMAZON.NUMBER",
+                          "confirmationRequired": false,
+                          "elicitationRequired": true,
+                          "prompts": {
+                              "elicitation": "Elicit.Slot.932310416052.1004645578092"
+                          },
+                          "validations": [
+                              {
+                                  "type": "isGreaterThan",
+                                  "prompt": "Slot.Validation.622232557362.1111944101787.940926011815",
+                                  "value": "0"
+                              },
+                              {
+                                  "type": "isLessThan",
+                                  "prompt": "Slot.Validation.622232557362.1111944101787.1406238761551",
+                                  "value": "200"
+                              }
+                          ]
+                      }
+                  ]
+              },
+              {
+                "name": "AddHeightIntent",
+                "confirmationRequired": false,
+                "prompts": {},
+                "slots": [
+                    {
+                        "name": "inputNumber",
+                        "type": "AMAZON.NUMBER",
+                        "confirmationRequired": false,
+                        "elicitationRequired": true,
+                        "prompts": {
+                            "elicitation": "Elicit.Slot.AddHeightIntent.inputNumberPrompt01"
+                        },
+                        "validations": [
+                            {
+                                "type": "isGreaterThan",
+                                "prompt": "Slot.Validation.AddHeightIntent.validation.promptlower01",
+                                "value": "100"
+                            },
+                            {
+                                "type": "isLessThan",
+                                "prompt": "Slot.Validation.AddHeightIntent.validation.prompthigher01",
+                                "value": "200"
+                            }
+                        ]
+                    }
+                ]
+                },
+                {
+                    "name": "AddAgeIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "inputNumber",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.AddAgeIntent.inputNumberPrompt01"
+                            },
+                            "validations": [
+                                {
+                                    "type": "isGreaterThan",
+                                    "prompt": "Slot.Validation.AddAgeIntent.validation.promptlower01",
+                                    "value": "16"
+                                },
+                                {
+                                    "type": "isLessThan",
+                                    "prompt": "Slot.Validation.AddAgeIntent.validation.prompthigher01",
+                                    "value": "125"
+                                }
+                            ]
+                        }
+                    ]
+                    },    
+                {
+                  "name": "AddInputIntent",
+                  "confirmationRequired": false,
+                  "prompts": {},
+                  "slots": [
+                      {
+                          "name": "inputDetail",
+                          "type": "AMAZON.SearchQuery",
+                          "confirmationRequired": false,
+                          "elicitationRequired": true,
+                          "prompts": {
+                              "elicitation": "Elicit.Slot.AddInputIntent.inputDetailPrompt01"
+                          }
+                      }
+                  ]
+              },
+              {
+                "name": "AddActivityIntent",
+                "confirmationRequired": false,
+                "prompts": {},
+                "slots": [
+                    {
+                        "name": "inputDetail",
+                        "type": "AMAZON.SearchQuery",
+                        "confirmationRequired": false,
+                        "elicitationRequired": true,
+                        "prompts": {
+                            "elicitation": "Elicit.Slot.AddInputIntent.inputDetailPrompt01"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "AddGenderIntent",
+                "confirmationRequired": false,
+                "prompts": {},
+                "slots": [
+                    {
+                        "name": "inputGender",
+                        "type": "GENDER_LIST",
+                        "confirmationRequired": false,
+                        "elicitationRequired": true,
+                        "prompts": {
+                            "elicitation": "Elicit.Slot.AddGenderIntent.GenderDetailPrompt01"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "SwitchUserIntent",
+                "confirmationRequired": false,
+                "prompts": {},
+                "slots": [
+                    {
+                        "name": "userName",
+                        "type": "AMAZON.FirstName",
+                        "confirmationRequired": false,
+                        "elicitationRequired": false,
+                        "prompts": {
+                            "elicitation": "Elicit.Slot.SwitchUserIntent.getname01"
+                        }
+                    }
+                ]
+            }
+          ],
+          "delegationStrategy": "SKILL_RESPONSE"
+      },
+      "prompts": [
+        {
+            "id": "Elicit.Slot.SwitchUserIntent.getname01",
+            "variations": [
+                {
+                    "type": "PlainText",
+                    "value": "Please tell me your first name"
+                }
+            ]
+        },
+          {
+              "id": "Elicit.Slot.932310416052.1004645578092",
+              "variations": [
+                  {
+                      "type": "PlainText",
+                      "value": "Please tell me your weight in kilograms"
+                  }
+              ]
+          },
+          {
+            "id": "Elicit.Slot.AddGenderIntent.GenderDetailPrompt01",
+            "variations": [
+                {
+                    "type": "PlainText",
+                    "value": "Please tell me your gender, male or female "
+                }
+            ]
+        },
+          {
+            "id": "Elicit.Slot.AddHeightIntent.inputNumberPrompt01",
+            "variations": [
+                {
+                    "type": "PlainText",
+                    "value": "Please tell me your height in centimetres"
+                }
+            ]
+        },
+        {
+            "id": "Elicit.Slot.AddAgeIntent.inputNumberPrompt01",
+            "variations": [
+                {
+                    "type": "PlainText",
+                    "value": "How old are you, in years ?"
+                }
+            ]
+        },
+        {
+            "id": "Elicit.Slot.AddInputIntent.inputDetailPrompt01",
+            "variations": [
+                {
+                    "type": "PlainText",
+                    "value": "What would you like to add "
+                }
+            ]
+        },
+        {
+            "id": "Slot.Validation.AddHeightIntent.validation.promptlower01",
+            "variations": [
+                {
+                    "type": "PlainText",
+                    "value": "Sorry, but your height must be more than one hundred centimetres. Please tell me your height in centimetres"
+                }
+            ]
+        },
+        {
+            "id": "Slot.Validation.AddHeightIntent.validation.prompthigher01",
+            "variations": [
+                {
+                    "type": "PlainText",
+                    "value": "Sorry, but your height must be less than two hundred centimetres. Please tell me your height in centimetres"
+                }
+            ]
+        },
+        {
+            "id": "Slot.Validation.AddAgeIntent.validation.promptlower01",
+            "variations": [
+                {
+                    "type": "PlainText",
+                    "value": "Sorry, but your age must be greater than 16. Please tell me your age in years"
+                }
+            ]
+        },
+        {
+            "id": "Slot.Validation.AddAgeIntent.validation.prompthigher01",
+            "variations": [
+                {
+                    "type": "PlainText",
+                    "value": "Sorry, but your age must be less than 125. Please tell me your age in years"
+                }
+            ]
+        },
+        {
+              "id": "Slot.Validation.622232557362.1111944101787.940926011815",
+              "variations": [
+                  {
+                      "type": "PlainText",
+                      "value": "Sorry, but the weight must be more than zero kilograms. Please tell me your weight"
+                  }
+              ]
+          },
+          {
+              "id": "Slot.Validation.622232557362.1111944101787.1406238761551",
+              "variations": [
+                  {
+                      "type": "PlainText",
+                      "value": "Sorry, but the weight must be less than two hundred kilograms. Please tell me your weight"
+                  }
+              ]
+          }
+      ]
+  }
+}

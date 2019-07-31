@@ -15,9 +15,8 @@ const AmazonDateParser = require('amazon-date-parser');
 
 const apiHelper = function () { };
 
-const getJWTHeaders = (userID) => {
-// In an ideal world, we will get this from the database with the userId
-    const token = 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxfQ.A_-lqUND-Zug8DiDeeFW9B-oalYMJqJpBji0XHkU3dA';
+const getJWTHeaders = (token) => {
+
     let headers={}
     Object.assign(headers,HEADERS )
     Object.assign(headers.headers, {Authorization:token })
@@ -25,15 +24,6 @@ const getJWTHeaders = (userID) => {
     return headers
   }
 
-const getJWTTokenHeaders = (userToken) => {
-    // In an ideal world, we will get this from the database with the userId
-        let headers={}
-        Object.assign(headers,HEADERS )
-        Object.assign(headers.headers, {Authorization:userToken })
-    
-        return headers
-      }
-    
 const getConfigObj = ( userID, method, body_detail=null ) => {
 // Used for all fetch requests
     let headers = getJWTHeaders(userID);
@@ -49,154 +39,71 @@ const getConfigObj = ( userID, method, body_detail=null ) => {
 
 }
 
-const getConfigTokenObj = ( userToken, method, body_detail=null ) => {
-    // Used for all fetch requests
-        let headers = getJWTTokenHeaders(userToken);
-        Object.assign(headers,  {method:method})
-        let configObj={}
-        if (body_detail) {
-          Object.assign (configObj, headers, {body:JSON.stringify({ detail: body_detail })})
-        } else {
-          Object.assign (configObj, headers)
-        }
-        
-        return configObj
+apiHelper.prototype.getUser = async (userID) => {
+    // Get user information for the welcome message
+        let headers = getJWTHeaders(userID);
+        console.log(`In getUsers ${headers}`)
+        const response = await fetch(USERS_URL, headers);
     
-    }
-    
-// apiHelper.prototype.getUser = async (userID) => {
-//     // Get user information for the welcome message
-//         let headers = getJWTHeaders(userID);
-//         console.log(`In getUsers ${headers}`)
-//         const response = await fetch(USERS_URL, headers);
-    
-//         return await response.json();
-    
-//     }
-
-apiHelper.prototype.getTokenUser = async (userToken) => {
-        // Get user information for the welcome message
-            let headers = getJWTTokenHeaders(userToken);
-            console.log(`In token getUsers ${headers}`)
-            const response = await fetch(USERS_URL, headers);
-        
-            return await response.json();
-        
-        }
-    
-
-// apiHelper.prototype.addHeight = async (inputNumber, userID) => {
-//         // Update the user with the height
-//             body = {height_cm:inputNumber};        
-//             let configObj = getConfigObj(userID, "PATCH", body );
-//             console.log(`In setHeight ${configObj}`)
-//             const response = await fetch(USERS_URL, configObj);
-        
-//             return await response.json();
-        
-//         }
-
-apiHelper.prototype.addHeight = async (inputNumber, userToken) => {
-            // Update the user with the height
-                body = {height_cm:inputNumber};        
-                let configObj = getConfigTokenObj(userToken, "PATCH", body );
-                console.log(`In setHeight ${configObj}`)
-                const response = await fetch(USERS_URL, configObj);
-            
-                return await response.json();
-            
-            }
-    
-// apiHelper.prototype.addAge = async (inputNumber, userID) => {
-//             // Update the user's dob using the age in years, the rails router controller will sort out the date
-//                 body = {age_years:inputNumber};        
-//                 let configObj = getConfigObj(userID, "PATCH", body );
-//                 console.log(`In setHeight ${configObj}`)
-//                 const response = await fetch(USERS_URL, configObj);
-
-//                 return await response.json();
-//             }
-
-apiHelper.prototype.addAge = async (inputNumber, userToken) => {
-    // Update the user's dob using the age in years, the rails router controller will sort out the date
-        body = {age_years:inputNumber};        
-        let configObj = getConfigTokenObj(userToken, "PATCH", body );
-        console.log(`In setHeight ${configObj}`)
-        const response = await fetch(USERS_URL, configObj);
-
         return await response.json();
+    
     }
-    
-// apiHelper.prototype.addGender = async (inputGender, userID) => {
-// // Update the user with the transformed gender
-//     switch (inputGender.toLowerCase()) {
-//         case "male":
-//             inputGender = "Male";
-//             break;
-//         case "female":
-//             inputGender = "Female";
-//             break;
-//         case "man":
-//             inputGender = "Male";
-//             break;
-//         case "boy":
-//             inputGender = "Male";
-//             break;
-//         case "girl":
-//             inputGender = "Female";
-//             break;
-//         case "lady":
-//             inputGender = "Female";
-//             break;
-//         case "woman":
-//             inputGender = "Female";
-//             break;
-//         default:
-//             inputGender = "Female";
-//         }
 
-//         body = {gender:inputGender};        
-//         let configObj = getConfigObj(userID, "PATCH", body );
-//         console.log(`In setHeight ${configObj}`)
-//         const response = await fetch(USERS_URL, configObj);
-    
-//         return await response.json();
-// }
-
-apiHelper.prototype.addGender = async (inputGender, userToken) => {
-    // Update the user with the transformed gender
-        switch (inputGender.toLowerCase()) {
-            case "male":
-                inputGender = "Male";
-                break;
-            case "female":
-                inputGender = "Female";
-                break;
-            case "man":
-                inputGender = "Male";
-                break;
-            case "boy":
-                inputGender = "Male";
-                break;
-            case "girl":
-                inputGender = "Female";
-                break;
-            case "lady":
-                inputGender = "Female";
-                break;
-            case "woman":
-                inputGender = "Female";
-                break;
-            default:
-                inputGender = "Female";
-            }
-    
-            body = {gender:inputGender};        
-            let configObj = getConfigTokenObj(userToken, "PATCH", body );
+apiHelper.prototype.addHeight = async (inputNumber, userID) => {
+        // Update the user with the height
+            body = {height_cm:inputNumber};        
+            let configObj = getConfigObj(userID, "PATCH", body );
             console.log(`In setHeight ${configObj}`)
             const response = await fetch(USERS_URL, configObj);
         
             return await response.json();
+        
+        }
+
+apiHelper.prototype.addAge = async (inputNumber, userID) => {
+            // Update the user's dob using the age in years, the rails router controller will sort out the date
+                body = {age_years:inputNumber};        
+                let configObj = getConfigObj(userID, "PATCH", body );
+                console.log(`In setHeight ${configObj}`)
+                const response = await fetch(USERS_URL, configObj);
+
+                return await response.json();
+            }
+    
+apiHelper.prototype.addGender = async (inputGender, userID) => {
+// Update the user with the transformed gender
+    switch (inputGender.toLowerCase()) {
+        case "male":
+            inputGender = "Male";
+            break;
+        case "female":
+            inputGender = "Female";
+            break;
+        case "man":
+            inputGender = "Male";
+            break;
+        case "boy":
+            inputGender = "Male";
+            break;
+        case "girl":
+            inputGender = "Female";
+            break;
+        case "lady":
+            inputGender = "Female";
+            break;
+        case "woman":
+            inputGender = "Female";
+            break;
+        default:
+            inputGender = "Female";
+        }
+
+        body = {gender:inputGender};        
+        let configObj = getConfigObj(userID, "PATCH", body );
+        console.log(`In setHeight ${configObj}`)
+        const response = await fetch(USERS_URL, configObj);
+    
+        return await response.json();
 }
     
 apiHelper.prototype.getWeights = async (userID) => {
