@@ -10,7 +10,7 @@
         },
         "interactionModel": {
           "en-GB": {
-            "eTag": "d5fdaf68e2d014c91ebbf09ebe7659d3"
+            "eTag": "96f5fb1e03923e1be8b3b0f016c55822"
           }
         },
         "lambda": [
@@ -23,7 +23,7 @@
             "codeUri": "lambda/us-east-1_ask-custom-weight_entry-default",
             "functionName": "ask-custom-weight_entry-default",
             "handler": "index.handler",
-            "revisionId": "7d475b3e-e106-4213-bd43-7aa6f3726d52",
+            "revisionId": "34d1e354-09b1-47c7-861c-04e17f4dbeeb",
             "runtime": "nodejs8.10"
           }
         ]

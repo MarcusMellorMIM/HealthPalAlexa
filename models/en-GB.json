@@ -93,22 +93,26 @@
                           "name": "weight",
                           "type": "AMAZON.NUMBER",
                           "samples": [
-                              "I weigh {weight} kilos",
-                              "add {weight}",
-                              "{weight} kilos",
-                              "{weight}",
-                              "add weight",
-                              "update weight",
-                              "set weight",
-                              "record weight"
-                          ]
-                      }
+                                "{weight}"
+                                ]
+                      },
+                      {
+                        "name": "decimal_weight",
+                        "type": "AMAZON.NUMBER",
+                        "samples": [
+                            "{weight} point {decimal_weight}"
+                        ]
+                    }
                   ],
                   "samples": [
                       "I weigh {weight} kilos",
                       "add {weight}",
                       "{weight} kilos",
                       "{weight}",
+                      "I weigh {weight} point {decimal_weight} kilos",
+                      "add {weight} point {decimal_weight}",
+                      "{weight} point {decimal_weight} kilos",
+                      "{weight} point {decimal_weight}",
                       "add weight",
                       "update weight",
                       "set weight",

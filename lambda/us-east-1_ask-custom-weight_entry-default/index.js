@@ -468,7 +468,14 @@ const AddWeightIntentHandler = {
     const {responseBuilder } = handlerInput;
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
-    const weight = parseInt(slots.weight.value);
+    let weight = parseInt(slots.weight.value);
+    let decimal_weight=0;
+    if (slots.decimal_weight) {
+      decimal_weight = parseInt(slots.decimal_weight.value);
+    }
+
+    weight = parseFloat(weight + parseFloat(decimal_weight/10))
+
     return apiHelper.addWeight(weight, userID)
       .then((data) => {
         const speechText = `${data.speechcongrats}. You have added ${weight} kilos. ${data.speechtext}`;
