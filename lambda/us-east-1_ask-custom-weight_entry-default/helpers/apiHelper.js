@@ -233,12 +233,12 @@ apiHelper.prototype.removeLastWeight = async (userID) => {
     
     }
     
-apiHelper.prototype.addInput = async (inputDetail, userID) => {
+apiHelper.prototype.addInput = async (inputDetail, userToken) => {
 // Add the entered input, food or drinks
             body = {detail:inputDetail,
                     alexa:"yes" };
         
-            let configObj = getConfigObj(userID, "POST", body );
+            let configObj = getConfigTokenObj(userToken, "POST", body );
             console.log(`In addInputs ${configObj}`)
             const response = await fetch(INPUTS_URL, configObj);
         
@@ -246,9 +246,9 @@ apiHelper.prototype.addInput = async (inputDetail, userID) => {
         
         }
 
-apiHelper.prototype.removeLastInput = async (userID) => {
+apiHelper.prototype.removeLastInput = async (userToken) => {
     // Remove the last entered weight, bysetting the index to -1
-            let configObj = getConfigObj(userID, "DELETE" );
+            let configObj = getConfigTokenObj(userToken, "DELETE" );
             console.log(`In removeLastInput ${configObj}`)
             const response = await fetch(`${INPUTS_URL}/last`, configObj);
         
@@ -256,9 +256,9 @@ apiHelper.prototype.removeLastInput = async (userID) => {
         
         }
 
-apiHelper.prototype.getInput = async (userID) => {
+apiHelper.prototype.getInput = async (userToken) => {
     // Get the last input recorded
-        let headers = getJWTHeaders(userID);
+        let headers = getJWTTokenHeaders(userToken);
         console.log(`In getInputs ${headers}`)
         const response = await fetch(`${INPUTS_URL}/last`, headers);
     

@@ -283,10 +283,12 @@ const AddInputIntentHandler = {
   },
   async handle(handlerInput) {
     const {responseBuilder } = handlerInput;
-    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+    //  const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const userToken = sessionAttributes.hPalToken.token;
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const inputDetail = slots.inputDetail.value;
-    return apiHelper.addInput(inputDetail, userID)
+    return apiHelper.addInput(inputDetail, userToken)
       .then((data) => {
         const speechText = `${data.speechcongrats}, you have added ${inputDetail} to your diary totalling ${data.calories} calories. ${data.speechtext}.`;
         return responseBuilder
@@ -312,9 +314,12 @@ const GetInputIntentHandler = {
   },
   async handle(handlerInput) {
     const {responseBuilder } = handlerInput;
-    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+    //  const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const userToken = sessionAttributes.hPalToken.token;
+
 // Get the last reading from a fetch request
-      return apiHelper.getInput(userID)
+      return apiHelper.getInput(userToken)
               .then((data) => {
           const speechText = `Your last entry was ${data.detail} , totalling ${data.calories} calories. ${data.speechtext}`;
           return responseBuilder
@@ -340,8 +345,10 @@ const RemoveInputIntentHandler = {
   }, 
   handle(handlerInput) {
     const {responseBuilder } = handlerInput;
-    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
-    return apiHelper.removeLastInput(userID)
+    const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+    //  const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const userToken = sessionAttributes.hPalToken.token;
+    return apiHelper.removeLastInput(userToken)
       .then((data) => {
         const speechText = `${data.speechcongrats}, you removed ${data.detail} from your diary, totalling ${data.calories} calories. ${data.speechtext}`;
         return responseBuilder
