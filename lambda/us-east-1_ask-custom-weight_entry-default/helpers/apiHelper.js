@@ -199,9 +199,9 @@ apiHelper.prototype.addGender = async (inputGender, userToken) => {
             return await response.json();
 }
     
-apiHelper.prototype.getWeights = async (userID) => {
+apiHelper.prototype.getWeights = async (userToken) => {
 // Get all weights ... maybe change route to just send last 2, as this is all I use in Alexa
-    let headers = getJWTHeaders(userID);
+    let headers = getJWTTokenHeaders(userToken);
     console.log(`In gertWeights ${headers}`)
     const response = await fetch(WEIGHTS_URL, headers);
 
@@ -209,13 +209,13 @@ apiHelper.prototype.getWeights = async (userID) => {
 
 }
 
-apiHelper.prototype.addWeight = async (weight, userID) => {
+apiHelper.prototype.addWeight = async (weight, userToken) => {
 // Add the entered weight
     body = {weight_kg:weight,
             weight_date_d:"",
             weight_date_t:"" };
 
-    let configObj = getConfigObj(userID, "POST", body );
+    let configObj = getConfigTokenObj(userToken, "POST", body );
     console.log(`In getWeights ${configObj}`)
     const response = await fetch(WEIGHTS_URL, configObj);
 
@@ -223,9 +223,9 @@ apiHelper.prototype.addWeight = async (weight, userID) => {
 
 }
 
-apiHelper.prototype.removeLastWeight = async (userID) => {
+apiHelper.prototype.removeLastWeight = async (userToken) => {
 // Remove the last entered weight, bysetting the index to last
-        let configObj = getConfigObj(userID, "DELETE" );
+        let configObj = getConfigTokenObj(userToken, "DELETE" );
         console.log(`In removeLastWeight ${configObj}`)
         const response = await fetch(`${WEIGHTS_URL}/last`, configObj);
     
@@ -265,12 +265,12 @@ apiHelper.prototype.getInput = async (userToken) => {
         return await response.json();
     }
             
-apiHelper.prototype.addActivity = async (inputDetail, userID) => {
+apiHelper.prototype.addActivity = async (inputDetail, userToken) => {
 // Add activities
             body = {detail:inputDetail,
                     alexa:"yes" };
         
-            let configObj = getConfigObj(userID, "POST", body );
+            let configObj = getConfigTokenObj(userToken, "POST", body );
             console.log(`In addActivities ${configObj}`)
             const response = await fetch(ACTIVITIES_URL, configObj);
         
@@ -278,9 +278,9 @@ apiHelper.prototype.addActivity = async (inputDetail, userID) => {
         
         }
 
-apiHelper.prototype.removeLastActivity = async (userID) => {
+apiHelper.prototype.removeLastActivity = async (userToken) => {
     // Remove the last entered activity, bysetting the index to last
-            let configObj = getConfigObj(userID, "DELETE" );
+            let configObj = getConfigTokenObj(userToken, "DELETE" );
             console.log(`In removeLastActivity ${configObj}`)
             const response = await fetch(`${ACTIVITIES_URL}/last`, configObj);
         
@@ -288,23 +288,23 @@ apiHelper.prototype.removeLastActivity = async (userID) => {
         
         }
 
-apiHelper.prototype.getActivity = async (userID) => {
+apiHelper.prototype.getActivity = async (userToken) => {
     // Get the last activity recorded
-        let headers = getJWTHeaders(userID);
+        let headers = getJWTTokenHeaders(userToken);
         console.log(`In getInputs ${headers}`)
         const response = await fetch(`${ACTIVITIES_URL}/last`, headers);
     
         return await response.json();
     }
 
-apiHelper.prototype.getSummary = async (inputDate, userID) => {
+apiHelper.prototype.getSummary = async (inputDate, userToken) => {
 // Get a summary for a given date range
 // The dates are a hash of startDate and endDate
             const summaryDate = new AmazonDateParser(inputDate);
             // The date should be in the following format
             //            { endDate: Sun Dec 03 2017 23:59:59 GMT+0000 (GMT),
             //             startDate: Mon Nov 27 2017 00:00:00 GMT+0000 (GMT) }
-            let headers = getJWTHeaders(userID);
+            let headers = getJWTTokenHeaders(userToken);
             Object.assign(headers.headers, summaryDate)
             console.log(`In getInputs ${headers}`)
             const response = await fetch(`${BASE_URL}/usersummary`, headers);

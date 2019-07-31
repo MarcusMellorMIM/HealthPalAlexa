@@ -395,10 +395,12 @@ const AddActivityIntentHandler = {
   },
   async handle(handlerInput) {
     const {responseBuilder } = handlerInput;
-    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+    //  const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const userToken = sessionAttributes.hPalToken.token;
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const inputDetail = slots.inputDetail.value;
-    return apiHelper.addActivity(inputDetail, userID)
+    return apiHelper.addActivity(inputDetail, userToken)
       .then((data) => {
         const speechText = `${data.speechcongrats}, you have added ${inputDetail} to your diary totalling ${data.calories} calories. ${data.speechtext}`;
         return responseBuilder
@@ -424,9 +426,12 @@ const GetActivityIntentHandler = {
   },
   async handle(handlerInput) {
     const {responseBuilder } = handlerInput;
-    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+    //  const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const userToken = sessionAttributes.hPalToken.token;
+
 // Get the last reading from a fetch request
-      return apiHelper.getActivity(userID)
+      return apiHelper.getActivity(userToken)
               .then((data) => {
           const speechText = `Your last entry was ${data.detail} , totalling ${data.calories} calories. ${data.speechtext}`;
           return responseBuilder
@@ -452,8 +457,11 @@ const RemoveActivityIntentHandler = {
   }, 
   handle(handlerInput) {
     const {responseBuilder } = handlerInput;
-    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
-    return apiHelper.removeLastActivity(userID)
+    const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+    //  const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const userToken = sessionAttributes.hPalToken.token;
+
+    return apiHelper.removeLastActivity(userToken)
       .then((data) => {
         const speechText = `${data.speechcongrats}, you removed ${data.detail} from your diary, totalling ${data.calories} calories. ${data.speechtext}`;
         return responseBuilder
@@ -501,11 +509,13 @@ const GetSummaryIntentHandler = {
   },
   async handle(handlerInput) {
     const {responseBuilder } = handlerInput;
-    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+    //  const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const userToken = sessionAttributes.hPalToken.token;
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     const inputDate = slots.inputDate.value;
     console.log(`inputDate value from getInputHandler ${inputDate}`)
-    return apiHelper.getSummary(inputDate, userID)
+    return apiHelper.getSummary(inputDate, userToken)
       .then((data) => {
         const speechText = `${data[data.length-1].insight} ${data[data.length-1].speechtext}`;
         return responseBuilder
@@ -550,7 +560,9 @@ const AddWeightIntentHandler = {
   },
   async handle(handlerInput) {
     const {responseBuilder } = handlerInput;
-    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+    //  const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const userToken = sessionAttributes.hPalToken.token;
     const slots = handlerInput.requestEnvelope.request.intent.slots;
     let weight = parseInt(slots.weight.value);
     if (slots.decimal_weight.value || slots.decimal_weight.value>0) {
@@ -558,7 +570,7 @@ const AddWeightIntentHandler = {
     }
 
 
-    return apiHelper.addWeight(weight, userID)
+    return apiHelper.addWeight(weight, userToken)
       .then((data) => {
         const speechText = `${data.speechcongrats}. You have added ${weight} kilos. ${data.speechtext}`;
         return responseBuilder
@@ -584,9 +596,11 @@ const GetWeightIntentHandler = {
   },
   async handle(handlerInput) {
     const {responseBuilder } = handlerInput;
-    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+    //  const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const userToken = sessionAttributes.hPalToken.token;
 // Get the last reading from a fetch request
-      return apiHelper.getWeights(userID)
+      return apiHelper.getWeights(userToken)
               .then((data) => {
         var speechText = "Your last weight was "
         if (data.length == 0) {
@@ -620,8 +634,11 @@ const RemoveWeightIntentHandler = {
   }, 
   handle(handlerInput) {
     const {responseBuilder } = handlerInput;
-    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
-    return apiHelper.removeLastWeight(userID)
+    const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+    //  const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const userToken = sessionAttributes.hPalToken.token;
+
+    return apiHelper.removeLastWeight(userToken)
       .then((data) => {
         const speechText = `You have removed your last recorded weight of ${data.weight_kg} kilos. You can add another weight, by saying add weight`
         return responseBuilder
