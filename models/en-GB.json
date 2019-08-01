@@ -1,7 +1,7 @@
 {
     "interactionModel": {
         "languageModel": {
-            "invocationName": "eva my health pal",
+            "invocationName": "eva health pal",
             "intents": [
                 {
                     "name": "AMAZON.CancelIntent",
@@ -35,7 +35,8 @@
                         "switch user",
                         "change user",
                         "switch account",
-                        "change account"
+                        "change account",
+                        "get user account"
                         ]
                 },
                 {

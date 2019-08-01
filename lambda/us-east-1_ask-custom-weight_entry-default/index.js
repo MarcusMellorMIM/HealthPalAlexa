@@ -12,41 +12,72 @@ const dynamoDBTableName = "weight";
 
 const LaunchRequestHandler = {
 // The 1st function initiated by Alexa when Eloise is opened
-// WORKTODO -- ADD A DIALOGUE TO GET THE RIGHT NAME, OR HAVE A MAIN ACCOUNT TAG
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
   },
 //  handle(handlerInput) {
     async handle(handlerInput) {
+
       const {responseBuilder } = handlerInput;
       const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
       const userID = handlerInput.requestEnvelope.context.System.user.userId;  
 
-// Gets the first token against the amazon account WORKTODO AS ABOVE
+// Gets the tokens against the amazon account - speech text varies depending on linked accounts
       return (dbHelper.getTokens(userID)
-      .then ((userTokens) => 
-          { 
-            let userToken=userTokens[0];
-            sessionAttributes.hPalToken = userToken;
-            handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-            return userToken.token;
-          })
-     .then ((userToken) => apiHelper.getTokenUser(userToken))
-     .then((data) => {
-              const speechText = `${data.salutation} ${data.speechtext}. If this is not you, please say switch user `;
-              return responseBuilder
-                .speak(speechText)
-                .reprompt(GENERAL_REPROMPT)
-                .getResponse();
-    })
-    .catch((err) => {
-      console.log("Error occured getting the user ", err);
-      const speechText = ` Sorry but I cannot open the user account right now. Please try again. ` + err
-      return responseBuilder
-        .speak(speechText)
-        .getResponse();
-    }))
-    },
+              .then ( (userTokens) => 
+                    {
+                  // To test .... WORKTODO, actually test in real life just in case returned data for one connection isn't an array
+                      if (userTokens.length===0) {
+                            // Ok, there are no connected users .... ask the person to create user
+                            sessionAttributes.hPalToken = "";
+                            handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+                            return { token:"none", speechtext:"Hi, welcome to Eva, there are no health pal linked accounts. You will soon be able to say create account to get started. Please do come back in a week or so. " };
+                        } else if (userTokens.length===1) {
+                            // Ok, there is one connected user ..... set this token, and away we go
+                            sessionAttributes.hPalToken = userTokens[0];
+                            handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+                            return { token:userTokens[0].token, speechtext:"Not used" };
+                        } else {
+                            // Ok there are many users ... ask the user to "select user"
+                            sessionAttributes.hPalToken = "";
+                            handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+                            return { token:"none", speechtext:`There are ${userTokens.length} health pal accounts linked to this Alexa, please say get user account to open your user account ` };
+                        }
+                      // let userToken=userTokens[0];
+                      // sessionAttributes.hPalToken = userToken;
+                      // handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+                      // return userToken.token;
+                    })
+          .then ( (userToken) => {
+            // Do the token selection and getting user information if the token is set
+            if (userToken.token!=="none") {
+              // There is one account linked to this Alexa
+                return apiHelper.getTokenUser(userToken.token)
+                      .then((data) => {
+                      const speechText = `${data.salutation} ${data.speechtext} `;
+                      return responseBuilder
+                        .speak(speechText)
+                        .reprompt(GENERAL_REPROMPT)
+                        .getResponse();
+                      })
+                      .catch((err) => {
+                        console.log("Error occured getting the user ", err);
+                        const speechText = ` Sorry but I cannot open the user account right now. Please try again. ` + err
+                        return responseBuilder
+                          .speak(speechText)
+                          .getResponse();
+                      }) 
+                    } else { 
+              // There is either none or too many accounts linked to this Alexa
+                        const speechText = userToken.speechtext;
+                        return responseBuilder
+                          .speak(speechText)
+                          .reprompt(GENERAL_REPROMPT)
+                          .getResponse();                        
+                      }
+                }) /* End of userToken then ( and { */
+          )
+      }
 };
 
 // /////////////////////////////////////
