@@ -111,16 +111,19 @@ const SwitchUserIntentHandler = {
     const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     const slots = handlerInput.requestEnvelope.request.intent.slots;
-    const userName = slots.userName.value;
+    const userNamePin = slots.userNamePin.value;
 
     return (dbHelper.getTokens(userID)
           .then ((userTokens) => 
               { 
-                let userToken=userTokens.filter(tok=>tok.name===userName.toLowerCase())[0];
+                console.log(`About to find token for ${userNamePin}`)
+                let userToken=userTokens.filter(tok=>tok.alexapin===parseInt(userNamePin) )[0];
                 sessionAttributes.hPalToken = userToken;
                 handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
                 return userToken.token;
               })
+    // WORK TO DO --- HANDLE ERROR IF USER PIN IS INVALID
+    // IDEALLY ASK FOR NAME ... IF THAT FAILS, THEN ASK FOR ALEXA IDENTIFYING NUMBER
          .then ((userToken) => apiHelper.getTokenUser(userToken))
          .then((data) => {
                   const speechText = `${data.salutation} ${data.speechtext}`;
@@ -131,7 +134,7 @@ const SwitchUserIntentHandler = {
         })
         .catch((err) => {
           console.log("Error occured switching user", err);
-          const speechText = ` Sorry but I cannot switch user account to ${userName} right now. Please try again. ` + err
+          const speechText = ` Sorry but I cannot switch to user account identified by ${userNamePin} right now. Please try again. ` + err
           return responseBuilder
             .speak(speechText)
             .getResponse();

@@ -19,19 +19,18 @@
                     "name": "SwitchUserIntent",
                     "slots": [
                         {
-                            "name": "userName",
-                            "type": "AMAZON.FirstName",
+                            "name": "userNamePin",
+                            "type": "AMAZON.NUMBER",
                             "samples": [
-                                "{userName}",
-                                "My name is {userName}",
-                                "I am called {userName}"
+                                "{userNamePin}",
+                                "My number is {userNamePin}",
+                                "My pin is {userNamePin}"
                             ]
                         }
                     ],
                     "samples": [
-                        "Switch user to {userName}",
-                        "My name is {userName}",
-                        "I am called {userName}",
+                        "Switch user to {userNamePin}",
+                        "My number is {userNamePin}",
                         "switch user",
                         "change user",
                         "switch account",
@@ -436,8 +435,8 @@
                 "prompts": {},
                 "slots": [
                     {
-                        "name": "userName",
-                        "type": "AMAZON.FirstName",
+                        "name": "userNamePin",
+                        "type": "AMAZON.NUMBER",
                         "confirmationRequired": false,
                         "elicitationRequired": true,
                         "prompts": {
@@ -455,7 +454,7 @@
                 "variations": [
                     {
                         "type": "PlainText",
-                        "value": "Please tell me your first name"
+                        "value": "Please tell me your identifying alexa number"
                     }
                 ]
             },    
