@@ -67,7 +67,7 @@ const LaunchRequestHandler = {
                           .speak(speechText)
                           .getResponse();
                       }) 
-                    } else { 
+                      } else { 
               // There is either none or too many accounts linked to this Alexa
                         const speechText = userToken.speechtext;
                         return responseBuilder
@@ -114,32 +114,44 @@ const SwitchUserIntentHandler = {
     const userNamePin = slots.userNamePin.value;
 
     return (dbHelper.getTokens(userID)
-          .then ((userTokens) => 
+          .then ( (userTokens) => 
               { 
-                console.log(`About to find token for ${userNamePin}`)
+                console.log(`About to find token for ${userNamePin}`);
                 let userToken=userTokens.filter(tok=>tok.alexapin===parseInt(userNamePin) )[0];
-                sessionAttributes.hPalToken = userToken;
-                handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
-                return userToken.token;
+                if (userToken) {
+                    sessionAttributes.hPalToken = userToken;
+                    handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+                    return {token:userToken.token,speechtext:""};
+                } else {
+                    return {token:"none",speechtext:`Sorry, but I could not find the account numbered ${userNamePin}, please say get user account, and try again.`};
+                }
               })
-    // WORK TO DO --- HANDLE ERROR IF USER PIN IS INVALID
-    // IDEALLY ASK FOR NAME ... IF THAT FAILS, THEN ASK FOR ALEXA IDENTIFYING NUMBER
-         .then ((userToken) => apiHelper.getTokenUser(userToken))
-         .then((data) => {
-                  const speechText = `${data.salutation} ${data.speechtext}`;
-                  return responseBuilder
-                    .speak(speechText)
-                    .reprompt(GENERAL_REPROMPT)
-                    .getResponse();
-        })
-        .catch((err) => {
-          console.log("Error occured switching user", err);
-          const speechText = ` Sorry but I cannot switch to user account identified by ${userNamePin} right now. Please try again. ` + err
-          return responseBuilder
-            .speak(speechText)
-            .getResponse();
-        }))
-  },
+            .then ( (userToken) => {
+                if (userToken.token!=="none") {
+                          return apiHelper.getTokenUser(userToken.token)
+                              .then((data) => {
+                                const speechText = `${data.salutation} ${data.speechtext}`;
+                                return responseBuilder
+                                  .speak(speechText)
+                                  .reprompt(GENERAL_REPROMPT)
+                                  .getResponse();
+                        })
+                      .catch((err) => {
+                        console.log("Error occured switching user", err);
+                        const speechText = ` Sorry but I cannot switch to user account identified by ${userNamePin} right now. Please try again. ` + err
+                        return responseBuilder
+                          .speak(speechText)
+                          .getResponse();
+                      })
+                } else { // Couldn't find the token, so ask the user to try again
+                      const speechText = userToken.speechtext;
+                      return responseBuilder
+                        .speak(speechText)
+                        .getResponse();
+                }
+        }) // End of userToken if
+    )
+  }
 };
 
 
@@ -699,7 +711,7 @@ const HelpIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'AMAZON.HelpIntent';
   },
   handle(handlerInput) {
-    const speechText = 'Hello, I am your health pal friend called Eva. You can switch accounts by saying switch user. You can then say, add, get or delete weight, food or activity. You can also ask for a summary for today. ';
+    const speechText = 'Hello, I am your health pal friend called Eva. You can switch accounts by saying switch user. You can then say, add, get or delete weight, food or activity. You can also ask for a summary for today, or say goodbye if you have finished. ';
 
     return handlerInput.responseBuilder
       .speak(speechText)
@@ -743,7 +755,7 @@ const ErrorHandler = {
 
     return handlerInput.responseBuilder
       .speak("Sorry, I do not understand the command. Please say again. ")
-      .reprompt("Sorry, I do not understand the command. Please say again, or say HELP, to get a list of valid commands. ")
+      .reprompt("Sorry, I do not understand the command. Please say again, or say HELP, to get a list of valid commands or just say goodbye ")
       .getResponse();
   },
 };
