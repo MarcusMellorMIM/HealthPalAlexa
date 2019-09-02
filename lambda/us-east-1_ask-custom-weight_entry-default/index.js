@@ -336,7 +336,7 @@ const AddInputIntentHandler = {
     const inputDetail = slots.inputDetail.value;
     return apiHelper.addInput(inputDetail, userToken)
       .then((data) => {
-        const speechText = `${data.speechcongrats}, you have added ${inputDetail} to your diary totalling ${data.calories} calories. ${data.speechtext}.`;
+        const speechText = `${data.speechcongrats}, ${data.speechtext}.`;
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)
