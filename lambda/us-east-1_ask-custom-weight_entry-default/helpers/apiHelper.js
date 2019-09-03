@@ -12,6 +12,7 @@ const HEADERS = { headers: { "Content-Type": "application/json",
 
 const fetch = require("node-fetch");
 const AmazonDateParser = require('amazon-date-parser');
+const dateFormat = require('dateformat');
 
 const apiHelper = function () { };
 
@@ -85,17 +86,6 @@ apiHelper.prototype.getTokenUser = async (userToken) => {
         }
     
 
-// apiHelper.prototype.addHeight = async (inputNumber, userID) => {
-//         // Update the user with the height
-//             body = {height_cm:inputNumber};        
-//             let configObj = getConfigObj(userID, "PATCH", body );
-//             console.log(`In setHeight ${configObj}`)
-//             const response = await fetch(USERS_URL, configObj);
-        
-//             return await response.json();
-        
-//         }
-
 apiHelper.prototype.addHeight = async (inputNumber, userToken) => {
             // Update the user with the height
                 body = {height_cm:inputNumber};        
@@ -107,15 +97,6 @@ apiHelper.prototype.addHeight = async (inputNumber, userToken) => {
             
             }
     
-// apiHelper.prototype.addAge = async (inputNumber, userID) => {
-//             // Update the user's dob using the age in years, the rails router controller will sort out the date
-//                 body = {age_years:inputNumber};        
-//                 let configObj = getConfigObj(userID, "PATCH", body );
-//                 console.log(`In setHeight ${configObj}`)
-//                 const response = await fetch(USERS_URL, configObj);
-
-//                 return await response.json();
-//             }
 
 apiHelper.prototype.addAge = async (inputNumber, userToken) => {
     // Update the user's dob using the age in years, the rails router controller will sort out the date
@@ -127,41 +108,6 @@ apiHelper.prototype.addAge = async (inputNumber, userToken) => {
         return await response.json();
     }
     
-// apiHelper.prototype.addGender = async (inputGender, userID) => {
-// // Update the user with the transformed gender
-//     switch (inputGender.toLowerCase()) {
-//         case "male":
-//             inputGender = "Male";
-//             break;
-//         case "female":
-//             inputGender = "Female";
-//             break;
-//         case "man":
-//             inputGender = "Male";
-//             break;
-//         case "boy":
-//             inputGender = "Male";
-//             break;
-//         case "girl":
-//             inputGender = "Female";
-//             break;
-//         case "lady":
-//             inputGender = "Female";
-//             break;
-//         case "woman":
-//             inputGender = "Female";
-//             break;
-//         default:
-//             inputGender = "Female";
-//         }
-
-//         body = {gender:inputGender};        
-//         let configObj = getConfigObj(userID, "PATCH", body );
-//         console.log(`In setHeight ${configObj}`)
-//         const response = await fetch(USERS_URL, configObj);
-    
-//         return await response.json();
-// }
 
 apiHelper.prototype.addGender = async (inputGender, userToken) => {
     // Update the user with the transformed gender
@@ -304,8 +250,14 @@ apiHelper.prototype.getSummary = async (inputDate, userToken) => {
             // The date should be in the following format
             //            { endDate: Sun Dec 03 2017 23:59:59 GMT+0000 (GMT),
             //             startDate: Mon Nov 27 2017 00:00:00 GMT+0000 (GMT) }
+            // So we will format to that expected in the controller using dateFormat package declared at start of file
+            const dateHash = {
+                startDate: dateFormat( summaryDate.startDate, "YYYY/MM/DD" ),
+                endDate: dateFormat( summaryDate.endDate, "YYYY/MM/DD" )
+            };
+
             let headers = getJWTTokenHeaders(userToken);
-            Object.assign(headers.headers, summaryDate)
+            Object.assign(headers.headers, dateHash)
             console.log(`In getInputs ${headers}`)
             const response = await fetch(`${BASE_URL}/usersummary`, headers);
         
