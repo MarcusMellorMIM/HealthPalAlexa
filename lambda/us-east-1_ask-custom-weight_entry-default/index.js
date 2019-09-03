@@ -563,7 +563,7 @@ const GetSummaryIntentHandler = {
     console.log(`inputDate value from getInputHandler ${inputDate}`)
     return apiHelper.getSummary(inputDate, userToken)
       .then((data) => {
-        const speechText = `${data[data.length-1].insight} ${data[data.length-1].speechtext}`;
+        const speechText = `${data[data.length-1].speechtext}`;
         return responseBuilder
           .speak(speechText)
           .reprompt(GENERAL_REPROMPT)

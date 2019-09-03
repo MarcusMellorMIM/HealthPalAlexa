@@ -23,7 +23,7 @@
             "codeUri": "lambda/us-east-1_ask-custom-weight_entry-default",
             "functionName": "ask-custom-weight_entry-default",
             "handler": "index.handler",
-            "revisionId": "39bc6c74-4aa7-4ba2-9f8c-4a38b001c030",
+            "revisionId": "22534ae8-b007-4320-9a1c-9257b1ceaa36",
             "runtime": "nodejs8.10"
           }
         ]
