@@ -12,6 +12,6 @@
     "amazon-date-parser": "^0.2.0",
     "ask-sdk": "^2.0.10",
     "dateformat": "^3.0.3",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.1"
   }
 }
